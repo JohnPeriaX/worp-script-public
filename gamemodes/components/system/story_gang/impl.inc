@@ -875,7 +875,7 @@ public StoryGang_Load(){
 Story_Save(story_id){
     if(story_id != -1 && Iter_Contains(Iter_Story, story_id)){
         new query[1024];
-        format(query, sizeof(query), "UPDATE `story_gangs` SET story_Mygang = '%d', story_MygangName = '%s', story_Enemy = '%d', story_EnemyName = '%s', story_Days = '%d', story_TimeStart = '%s', story_TimeEnd = '%s'",
+        mysql_format(dbCon, query, sizeof(query), "UPDATE `story_gangs` SET story_Mygang = '%d', story_MygangName = '%e', story_Enemy = '%d', story_EnemyName = '%e', story_Days = '%d', story_TimeStart = '%e', story_TimeEnd = '%e'",
             Story_Gang[story_id][story_Mygang],
             Story_Gang[story_id][story_MygangName],
             Story_Gang[story_id][story_Enemy],
@@ -885,7 +885,7 @@ Story_Save(story_id){
             Story_Gang[story_id][story_TimeEnd]
         );
 
-        format(query, sizeof(query), "%s, story_Label = '%d', story_Bigcar = '%d', story_Pushhome = '%d', story_Hidebody = '%d', story_Skingang = '%d', story_Weapon = '%d', story_Money = '%d', story_State = '%d', story_TimeHour = '%d', story_GangWinName = '%s' WHERE `story_ID` = %d",
+        mysql_format(dbCon, query, sizeof(query), "%s, story_Label = '%d', story_Bigcar = '%d', story_Pushhome = '%d', story_Hidebody = '%d', story_Skingang = '%d', story_Weapon = '%d', story_Money = '%d', story_State = '%d', story_TimeHour = '%d', story_GangWinName = '%e' WHERE `story_ID` = %d",
             query,
             Story_Gang[story_id][story_Label],
             Story_Gang[story_id][story_Bigcar],
