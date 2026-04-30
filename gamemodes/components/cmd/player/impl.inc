@@ -32,7 +32,7 @@ CMD:me(playerid, params[])
 {
 	if(LoggedIn[playerid] == false)
 		return 0;
-		
+
 	if (isnull(params))
 	    return SendClientMessage(playerid, -1, "/me [action]");
 
@@ -50,7 +50,7 @@ CMD:report(playerid, params[])
 {
 	if(LoggedIn[playerid] == false)
 		return ErrorMsg(playerid, "คุณยังไม่ได้เข้าสู่ระบบ");
-		
+
 	new string[128];
 	if(systemVariables[reportSystem] == 0)
 	{
@@ -134,7 +134,7 @@ CMD:shout(playerid, params[])
 				ApplyAnimation(playerid,"PED","IDLE_CHAT",4.1, 0, 1, 1, 1, strlen(params) * 100, 1);
 			}
 		}
-			
+
 		//ApplyAnimation(playerid, "GANGS", "prtial_gngtlkA", 4.1, 0, 1, 1, 1, strlen(params) * 100, 1);
 	}
 	return 1;
@@ -167,7 +167,7 @@ CMD:low(playerid, params[])
 				ApplyAnimation(playerid,"PED","IDLE_CHAT",4.1, 0, 1, 1, 1, strlen(params) * 100, 1);
 			}
 		}
-			
+
 		//ApplyAnimation(playerid, "GANGS", "prtial_gngtlkA", 4.1, 0, 1, 1, 1, strlen(params) * 100, 1);
 	}
 	return 1;
@@ -555,7 +555,7 @@ CMD:lock(playerid, const params[])
 {
 	if(LoggedIn[playerid] == false)
 		return ErrorMsg(playerid, "คุณยังไม่ได้เข้าสู่ระบบ");
-		
+
 	new id = -1;
 	if ((id = Car_Nearest(playerid)) != -1)
 	{
@@ -885,7 +885,7 @@ CMD:engine(playerid, const params[])
 							SetLightStatus(vehicleid, true);
 							SendNearbyMessage(playerid, 30.0, COLOR_RP, "** %s เริ่มทำงานเครื่องยนต์", ReturnRoleplayName(playerid));
 							if(TogVehSpeedo[playerid] == 0){
-								
+
 								PlayerTextDrawHide(playerid, VehSpeedo[playerid][15]);
 
 								PlayerTextDrawShow(playerid, VehSpeedo[playerid][2]);
@@ -1303,7 +1303,7 @@ CMD:chm(playerid, params[]){
 			SendClientMessage(playerid, COLOR_YELLOW, "- หากคุณต้องการยกเลิกให้ใช้ '/dischm'");
 		}
 	}
-	
+
 	if(GetGroupType(playerid) == GROUP_MECHANIC){
 		if(PlayerData[userid][pCanMechanicChm] == 0)
 			return ErrorMsg(playerid, "ผู้เล่นคนนั้นยังไม่ได้เรียกใช้บริการ");
@@ -1414,7 +1414,7 @@ stock IsACruiser(vehicleid)
 CMD:carsign(playerid, params[]){
 	new string[32];
 	if(!IsPlayerInAnyVehicle(playerid)) return ErrorMsg(playerid, "คุณไม่ได้อยู่ในยานพาหนะ");
-	
+
 	if (GetGroupType(playerid) != GROUP_POLICE)
 		return ErrorMsg(playerid, "คุณจะต้องเป็นเจ้าหน้าที่ตำรวจ");
 
@@ -1422,7 +1422,7 @@ CMD:carsign(playerid, params[]){
 
 	new vehicleid = GetPlayerVehicleID(playerid);
 	if(vehiclecallsign[vehicleid] == 0){
-		vehicle3Dtext[vehicleid] = Create3DTextLabel(string, COLOR_WHITE, 0.0, 0.0, 0.0, 50.0, 0, 1);
+		vehicle3Dtext[vehicleid] = Create3DTextLabel(string, COLOR_WHITE, 0.0, 0.0, 0.0, 50.0, 0, bool:1);
 		Attach3DTextLabelToVehicle(vehicle3Dtext[vehicleid], vehicleid, -0.7, -1.9, -0.3);
 		vehiclecallsign[vehicleid] = 1;
 		SendClientMessage(playerid, COLOR_RED, "ใช้ '/remove_carsign' ในการลบ");
@@ -1607,7 +1607,7 @@ CMD:giverank(playerid, params[])
 
     if (PlayerData[userid][pGroup] != PlayerData[playerid][pGroup])
         return SendClientMessage(playerid, -1, "ผู้เล่นนั้นไม่ได้เป็นส่วนหนึ่งของฝ่ายหรือกลุ่มเดียวกับคุณ");
-		
+
     if (rankid < 1 || rankid > GroupData[PlayerData[playerid][pGroup]][groupRanks] - 1)
         return SendClientMessageEx(playerid, -1, "ยศที่ระบุไม่ถูกต้อง ยศต้องอยู่ระหว่าง 1 ถึง %d", GroupData[PlayerData[playerid][pGroup]][groupRanks]);
 
@@ -1700,7 +1700,7 @@ CMD:makeidcard(playerid, const params[])
 
 	if (GetMoney(playerid) < 1000)
 		return ErrorMsg(playerid, "คุณมีเงินไม่เพียงพอ");
-			
+
 	if (PlayerInventory_AllCount(playerid, "Id Card") >= 1)
  		return ErrorMsg(playerid, "คุณมีบัตรประชาชนแล้ว");
 
@@ -1712,7 +1712,7 @@ CMD:makeidcard(playerid, const params[])
 		return SendClientMessageEx(playerid, COLOR_RED, "[ระบบ] {FFFFFF}ความจุของกระเป๋าไม่เพียงพอ (%d/%d) หรือ จำนวนไอเท็มชิ้นนั้นของคุณเต็มแล้ว", PlayerInventory_Items(playerid), PlayerData[playerid][pMaxItem]);
 	}
    	SendClientMessage(playerid, -1, "คุณได้ทำบัตรประชาชนเรียบร้อยแล้ว");
-	
+
 	return 1;
 }
 
@@ -1743,7 +1743,7 @@ CMD:fps(playerid)
 alias:sharelocation("sl")
 CMD:sharelocation(playerid, params[]){
 	if(!LoggedIn[playerid]) return 1;
-	
+
 	if(CheckPlayerNotSendGps(playerid) != -1) return ErrorMsg(playerid, "คุณไม่สามารถใช้ได้ตอนนี้");
 
 	if (BitFlag_Get(g_PlayerFlags[playerid],PLAYER_PHONE_OFF))
