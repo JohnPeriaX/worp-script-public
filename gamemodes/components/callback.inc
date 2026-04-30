@@ -80,6 +80,8 @@ public OnGameModeExit(){
 }
 
 public OnPlayerRequestClass(playerid, classid){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(classid < 0) return 0;
 	if(IsPlayerConnected(playerid)){
 		PlayerCarryAirDrop[playerid] = -1;
 		TogglePlayerControllable(playerid, 0);
@@ -125,6 +127,8 @@ public SetCamera(playerid){
 }
 
 public OnPlayerClickMap(playerid, Float:fX, Float:fY, Float:fZ) {
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(fX < -20000.0 || fX > 20000.0 || fY < -20000.0 || fY > 20000.0 || fZ < -1000.0 || fZ > 30000.0) return 0;
 	if(!LoggedIn[playerid]) return 1;
 	if(PlayerData[playerid][pAdmin] >= 1338) SetPlayerPos(playerid, fX, fY, fZ);
 
@@ -137,6 +141,7 @@ public OnPlayerClickMap(playerid, Float:fX, Float:fY, Float:fZ) {
 }
 
 public OnPlayerConnect(playerid){
+	Security_ResetPlayerNet(playerid);
 	if(IsPlayerNPC(playerid)){
 		new string[128];
 		format(string, sizeof string, "NPC %s(%d) Connecting.....", ReturnName(playerid), playerid);
@@ -152,6 +157,8 @@ public OnPlayerConnect(playerid){
 		}
 	}
 
+	GetPlayerIp(playerid, PlayerData[playerid][pLastIP], 16);
+
 	if(!IsPlayerNPC(playerid)){
 		if(UserNameValidator(ReturnName(playerid))){
 			ErrorMsg(playerid, "ชื่อหน้า Samp หรือใน Data ไม่ควรมีอักษรพิเศษ และ ห้ามมี '_' (Underscore)");
@@ -163,10 +170,8 @@ public OnPlayerConnect(playerid){
 	RemoveObjectServerPlayer(playerid);
 	RemovePrison(playerid);
 
-	GetPlayerIp(playerid, PlayerData[playerid][pLastIP], 16);
-
 	new str[128];
-	format(str, sizeof(str), "SELECT * FROM `blacklist` WHERE `Username` = '%s' OR `IP` = '%s'", ReturnName(playerid), PlayerData[playerid][pLastIP]);
+	mysql_format(dbCon, str, sizeof(str), "SELECT * FROM `blacklist` WHERE `Username` = '%e' OR `IP` = '%e'", ReturnName(playerid), PlayerData[playerid][pLastIP]);
 	mysql_tquery(dbCon, str, "OnPlayerBlacklist", "d", playerid);
 
 	TextDrawShowForPlayer(playerid, LogoServer[0]);
@@ -178,6 +183,13 @@ public OnPlayerConnect(playerid){
 
 public OnIncomingConnection(playerid, ip_address[], port){
 	new string[128];
+	if(AntiBot_CheckConnection(ip_address))
+	{
+		format(string, sizeof string, "[Security]: Block incoming connection ID:%d IP:%s:%i Reason: flood", playerid, ip_address, port);
+		print(string);
+		return Kick(playerid);
+	}
+
 	if(IsPlayerNPC(playerid)){
 		printf("Incoming connection for player ID (%d) [IP/port: %s:%i]", playerid, ip_address, port);
 		format(string, sizeof string, "[Connecting]: (%d) กำลัง Connect เข้าสู่เซิฟเวอร์ (IP/Port: %s:%i)", playerid, ip_address, port);
@@ -195,6 +207,7 @@ public OnPlayerFinishedDownloading(playerid, virtualworld){
 }
 
 public OnPlayerDisconnect(playerid, reason){
+	Security_ResetPlayerNet(playerid);
 	if(IsPlayerNPC(playerid)){
 		if(!strcmp(ReturnName(playerid), "NPCBUSNO1", true)){
 			TRP_DestroyVehicle(BusRed);
@@ -641,8 +654,13 @@ public OnPlayerDeath(playerid, killerid, reason){
 	if(!LoggedIn[playerid]) return 1;
 	if(IsPlayerNPC(playerid)) return 1;
 
+	new bool:validKiller = (killerid != INVALID_PLAYER_ID && IsPlayerConnected(killerid) && LoggedIn[killerid]);
+	new killerName[MAX_PLAYER_NAME];
+	if(validKiller) GetPlayerName(killerid, killerName, sizeof(killerName));
+	else format(killerName, sizeof(killerName), "INVALID");
+
 	if (PlayerInventoryStatus[playerid]) OnPlayerInventory_Close(playerid);
-	Log_Write("logs/death.txt", "[%s] [%s] Killed by [%s] by [%d]", ReturnDate(), ReturnName(playerid), ReturnName(killerid), reason);
+	Log_Write("logs/death.txt", "[%s] [%s] Killed by [%s] by [%d]", ReturnDate(), ReturnName(playerid), killerName, reason);
 
 	if(PlayerEnterWarFlag[playerid]){
 		foreach(new i : Player){
@@ -683,7 +701,7 @@ public OnPlayerDeath(playerid, killerid, reason){
 				}
 				Group_Save(Story_Gang[story_id][story_Enemy]);
 			}
-			else if(Story_Gang[story_id][story_Mygang] == PlayerData[killerid][pGroup]){
+			else if(validKiller && Story_Gang[story_id][story_Mygang] == PlayerData[killerid][pGroup]){
 				GroupData[Story_Gang[story_id][story_Mygang]][groupKill]++;
 				SendFactionMessage(Story_Gang[story_id][story_Mygang], 0x00AAFFAA, "(( แก๊งของคุณได้รับคะแนนศพสำหรับสตอรี่ +1 [%d/%d] ))", GroupData[Story_Gang[story_id][story_Mygang]][groupKill], Story_Gang[story_id][story_Hidebody]);
 
@@ -698,7 +716,7 @@ public OnPlayerDeath(playerid, killerid, reason){
 	}
 
 	new string[128];
-	format(string, sizeof(string), "ผู้เล่น %s ถูกฆ่าโดย %s ด้วย %s", ReturnName(playerid), ReturnName(killerid), ReturnWeaponName(reason));
+	format(string, sizeof(string), "ผู้เล่น %s ถูกฆ่าโดย %s ด้วย %s", ReturnName(playerid), killerName, ReturnWeaponName(reason));
 	SendAdminsMessage(1, COLOR_GRAY, string);
 	return 1;
 }
@@ -823,6 +841,13 @@ public OnPlayerDeathFinished(playerid){
 }
 
 public OnPlayerDamage(&playerid, &Float:amount, &issuerid, &weapon, &bodypart){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(issuerid < 0 || issuerid >= MAX_PLAYERS || !IsPlayerConnected(issuerid)) return 0;
+	if(!LoggedIn[playerid] || !LoggedIn[issuerid]) return 0;
+	if(amount < 0.0 || amount > 250.0) return 0;
+	if(weapon < 0 || weapon > 55) return 0;
+	if(bodypart != 0 && (bodypart < 3 || bodypart > 9)) return 0;
+
 	if(playerid != INVALID_PLAYER_ID && issuerid != INVALID_PLAYER_ID){
 		if(LoggedIn[playerid] || LoggedIn[issuerid]){
 			new Float:hp, Float:armour;
@@ -907,6 +932,12 @@ public UnfreezeDamage(playerid){
 }
 
 public OnPlayerDamageDone(playerid, Float:amount, issuerid, weapon, bodypart){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(issuerid < 0 || issuerid >= MAX_PLAYERS || !IsPlayerConnected(issuerid)) return 0;
+	if(!LoggedIn[playerid] || !LoggedIn[issuerid]) return 0;
+	if(amount < 0.0 || amount > 250.0) return 0;
+	if(weapon < 0 || weapon > 55) return 0;
+	if(bodypart != 0 && (bodypart < 3 || bodypart > 9)) return 0;
 
 	//playerid = คนที่ถูกกระทำ, issuerid == คนกระทำ
 	if(weapon == 55) return 0;
@@ -979,18 +1010,24 @@ public OnPlayerDamageDone(playerid, Float:amount, issuerid, weapon, bodypart){
 }
 
 public OnPlayerCommandReceived(playerid, cmd[], params[], flags){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(strlen(cmd) > 31 || strlen(params) > 512) { SecurityKick(playerid, "bad-command-size"); return 0; }
     if(!LoggedIn[playerid]) return 0;
 	printf("[CMD LOG] [%d] %s: /%s %s", playerid, ReturnPlayerName(playerid), cmd, params);
     return 1;
 }
 
 public OnPlayerCommandPerformed(playerid, cmd[], params[], result, flags){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
 	if(!LoggedIn[playerid]) return 0;
     if(result == -1) return 0;
     return 1;
 }
 
 public OnPlayerText(playerid, text[]){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	new textLen = strlen(text);
+	if(textLen < 1 || textLen > 144) { SecurityKick(playerid, "bad-chat-size"); return 0; }
 
 	if(!strcmp(text, "/.killall", true) || !strcmp(text, "/find", true) || !strcmp(text, "/salo", true) || !strcmp(text, "/aimbot", true)){
 		Kick(playerid);
@@ -1088,14 +1125,18 @@ public OnPlayerText(playerid, text[]){
 }
 
 public OnPlayerEnterDynamicCP(playerid, checkpointid){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
     return 1;
 }
 
 public OnPlayerLeaveDynamicCP(playerid, STREAMER_TAG_CP:checkpointid){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
     return 1;
 }
 
 public OnPlayerEnterVehicle(playerid, vehicleid, ispassenger){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 
 	if (IsPlayerNPC(playerid)) return 1;
 
@@ -1239,6 +1280,8 @@ public OnPlayerEnterVehicle(playerid, vehicleid, ispassenger){
 }
 
 public OnPlayerExitVehicle(playerid, vehicleid){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	if(!LoggedIn[playerid]) return 1;
 	if(PlayerSpeedoShowing[playerid] && TogVehSpeedo[playerid] == 0){
 		PlayerSpeedoShowing[playerid] = false;
@@ -1266,6 +1309,8 @@ public OnPlayerExitVehicle(playerid, vehicleid){
 }
 
 public OnPlayerStateChange(playerid, newstate, oldstate){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(newstate < 0 || newstate > 9 || oldstate < 0 || oldstate > 9) return 0;
 	if(IsPlayerNPC(playerid)) return 1;
 
 	if(!LoggedIn[playerid]) return 1;
@@ -1634,6 +1679,7 @@ public OnPlayerStateChange(playerid, newstate, oldstate){
 }
 
 public OnPlayerEnterCheckpoint(playerid){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
 	if(!LoggedIn[playerid]) return 1;
 
 	if(PlayerData[playerid][pJob] == ENGJOB){
@@ -1955,10 +2001,12 @@ public OnModelSelectionResponse(playerid, extraid, index, modelid, response){
 }
 
 public OnPlayerLeaveCheckpoint(playerid){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
 	return 1;
 }
 
 public OnPlayerEnterRaceCheckpoint(playerid){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
 	new string[128];
 	if(PlayerEnterRacing[playerid] && PlayerRacingStarted[playerid] && PlayerGetDuel[playerid] != INVALID_PLAYER_ID){
 		RepairVehicle(PlayerRacingCar[playerid]);
@@ -2076,6 +2124,7 @@ public OnPlayerEnterRaceCheckpoint(playerid){
 
 public OnPlayerLeaveRaceCheckpoint(playerid)
 {
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
 	return 1;
 }
 
@@ -2086,6 +2135,7 @@ public OnRconCommand(cmd[])
 
 public OnPlayerRequestSpawn(playerid)
 {
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
 	return 1;
 }
 
@@ -2111,11 +2161,14 @@ public OnVehiclePaintjob(playerid, vehicleid, paintjobid){
 
 public OnPlayerSelectedMenuRow(playerid, row)
 {
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(row < 0 || row > 127) return 0;
 	return 1;
 }
 
 public OnPlayerExitedMenu(playerid)
 {
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
 	return 1;
 }
 
@@ -2124,12 +2177,14 @@ public OnPlayerInteriorChange(playerid, newinteriorid, oldinteriorid){
 }
 
 public OnPlayerPickUpPickup(playerid, pickupid){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(pickupid < 0) return 0;
 	return 1;
 }
 
 public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
 	if(!LoggedIn[playerid]) return 1;
-	if(!IsPlayerConnected(playerid)) return 1;
 	if(LoggedIn[playerid]){
 		if(newkeys & KEY_CTRL_BACK){
 			if(CheckPlayerNotOpenInv(playerid) != -1) return 1;
@@ -3831,10 +3886,11 @@ public OnRconLoginAttempt(ip[], password[], success){
 }
 
 public OnPlayerUpdate(playerid){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
 	if(IsAFK{playerid} && LoggedIn[playerid]){
 		printf("%s Come in Server After AFK", ReturnRoleplayName(playerid));
 		new query[256];
-		mysql_format(dbCon, query, sizeof(query), "SELECT Wallet, UpdateWallet, WalletAfter FROM `accounts` WHERE Name = '%s' AND SQLID = %d AND UpdateWallet = 1 LIMIT 1", AccountData[playerid][uName], AccountData[playerid][uSQLID]);
+		mysql_format(dbCon, query, sizeof(query), "SELECT Wallet, UpdateWallet, WalletAfter FROM `accounts` WHERE Name = '%e' AND SQLID = %d AND UpdateWallet = 1 LIMIT 1", AccountData[playerid][uName], AccountData[playerid][uSQLID]);
 		mysql_tquery(dbCon, query, "UpdateAccountWallet", "i", playerid);
 	}
 	IsAFK{playerid} = false;
@@ -3851,7 +3907,7 @@ public UpdateAccountWallet(playerid){
 		new query[256], walletafter;
 		cache_get_value_name_int(0, "Wallet", AccountData[playerid][uWallet]);
 		cache_get_value_name_int(0, "WalletAfter", walletafter);
-		mysql_format(dbCon, query, sizeof(query), "UPDATE accounts SET UpdateWallet = 0, WalletAfter = 0 WHERE Name = '%s' AND SQLID = %d LIMIT 1", AccountData[playerid][uName], AccountData[playerid][uSQLID]);
+		mysql_format(dbCon, query, sizeof(query), "UPDATE accounts SET UpdateWallet = 0, WalletAfter = 0 WHERE Name = '%e' AND SQLID = %d LIMIT 1", AccountData[playerid][uName], AccountData[playerid][uSQLID]);
 		mysql_tquery(dbCon, query);
 		printf("Wallet %s Update", AccountData[playerid][uName]);
 		SendClientMessageEx(playerid, COLOR_GREEN, "[การเติมเงิน]: {FFFFFF}คุณได้รับ %d Wallet", walletafter);
@@ -3880,6 +3936,7 @@ public OnVehicleStreamOut(vehicleid, forplayerid)
 }
 
 public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
 
 	if(PlayerInScreen[playerid]){
 		if(playertextid == ScreenTextDraw[playerid][1]){
@@ -6017,6 +6074,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 }
 
 public OnPlayerClickTextDraw(playerid, Text:clickedid){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
 
 	if(PlayerInScreen[playerid]){
 		if(clickedid == Text:INVALID_TEXT_DRAW){
@@ -6212,6 +6270,8 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid){
 
 public OnPlayerClickPlayer(playerid, clickedplayerid, source)
 {
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(clickedplayerid < 0 || clickedplayerid >= MAX_PLAYERS || !IsPlayerConnected(clickedplayerid)) return 0;
 	if(!LoggedIn[playerid]) return 0;
 	if(PlayerData[playerid][pAdmin] >= 1) {
 
@@ -6243,7 +6303,34 @@ public OnPlayerClickPlayer(playerid, clickedplayerid, source)
 	return 1;
 }
 
+public OnIncomingPacket(playerid, packetid, BitStream:bs)
+{
+	#pragma unused bs
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(Security_CheckNetFlood(playerid, packetid, false)) return 0;
+
+	switch(packetid)
+	{
+		case 200, 203, 207, 211:
+		{
+			if(!IsPlayerNPC(playerid) && !LoggedIn[playerid]) return 0;
+		}
+	}
+	return 1;
+}
+
+public OnIncomingRPC(playerid, rpcid, BitStream:bs)
+{
+	#pragma unused bs
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(Security_CheckNetFlood(playerid, rpcid, true)) return 0;
+	return 1;
+}
+
 public OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY, Float:fZ){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid) || !LoggedIn[playerid]) return 0;
+	if(weaponid < 0 || weaponid > 55) return 0;
+	if(hittype == BULLET_HIT_TYPE_PLAYER && (hitid == INVALID_PLAYER_ID || !IsPlayerConnected(hitid))) return 0;
 
 	if(weaponid == PlayerData[playerid][pMyWeapon][0]){
 		PlayerData[playerid][pMyAmmo][0]--;
@@ -6288,7 +6375,11 @@ public OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY
 }
 
 public OnPlayerEditAttachedObject(playerid, response, index, modelid, boneid, Float:fOffsetX, Float:fOffsetY, Float:fOffsetZ, Float:fRotX, Float:fRotY, Float:fRotZ, Float:fScaleX, Float:fScaleY, Float:fScaleZ){
-	if(!LoggedIn[playerid]) return 0;
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid) || !LoggedIn[playerid]) return 0;
+	if(index < 0 || index > 9 || boneid < 1 || boneid > 18) { SecurityKick(playerid, "bad-attached-object-index"); return 0; }
+	if(modelid < 1 || modelid > 20000) { SecurityKick(playerid, "bad-attached-object-model"); return 0; }
+	if(fScaleX < 0.01 || fScaleX > 10.0 || fScaleY < 0.01 || fScaleY > 10.0 || fScaleZ < 0.01 || fScaleZ > 10.0) { SecurityKick(playerid, "bad-attached-object-scale"); return 0; }
+	if(fOffsetX < -10.0 || fOffsetX > 10.0 || fOffsetY < -10.0 || fOffsetY > 10.0 || fOffsetZ < -10.0 || fOffsetZ > 10.0) { SecurityKick(playerid, "bad-attached-object-offset"); return 0; }
 	if (response){
 		if(GetPVarInt(playerid, "AttachEdit") == 1){
    			DeletePVar(playerid, "AttachEdit");
@@ -6391,7 +6482,11 @@ public OnPlayerEditAttachedObject(playerid, response, index, modelid, boneid, Fl
 }
 
 public OnPlayerEditDynamicObject(playerid, objectid, response, Float:x, Float:y, Float:z, Float:rx, Float:ry, Float:rz){
-	if(!LoggedIn[playerid]) return 0;
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid) || !LoggedIn[playerid]) return 0;
+	if(!IsValidDynamicObject(objectid)) { SecurityKick(playerid, "bad-dynamic-object-id"); return 0; }
+	if(response < EDIT_RESPONSE_CANCEL || response > EDIT_RESPONSE_UPDATE) { SecurityKick(playerid, "bad-dynamic-object-response"); return 0; }
+	if(x < -20000.0 || x > 20000.0 || y < -20000.0 || y > 20000.0 || z < -1000.0 || z > 30000.0) { SecurityKick(playerid, "bad-dynamic-object-pos"); return 0; }
+	if(rx < -3600.0 || rx > 3600.0 || ry < -3600.0 || ry > 3600.0 || rz < -3600.0 || rz > 3600.0) { SecurityKick(playerid, "bad-dynamic-object-rot"); return 0; }
 
 	if (PlayerData[playerid][pEditGate] != -1 && GateData[PlayerData[playerid][pEditGate]][gateExists]){
 		if (response == EDIT_RESPONSE_FINAL){
