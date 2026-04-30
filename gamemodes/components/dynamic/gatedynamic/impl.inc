@@ -150,7 +150,7 @@ stock Gate_Save(gateid)
 	new
 	    query[768];
 
-	format(query, sizeof(query), "UPDATE `gates` SET `gateModel` = '%d', `gateSpeed` = '%.4f', `gateRadius` = '%.4f', `gateTime` = '%d', `gateX` = '%.4f', `gateY` = '%.4f', `gateZ` = '%.4f', `gateRX` = '%.4f', `gateRY` = '%.4f', `gateRZ` = '%.4f' WHERE `gateID` = '%d'",
+	mysql_format(dbCon, query, sizeof(query), "UPDATE `gates` SET `gateModel` = '%d', `gateSpeed` = '%.4f', `gateRadius` = '%.4f', `gateTime` = '%d', `gateX` = '%.4f', `gateY` = '%.4f', `gateZ` = '%.4f', `gateRX` = '%.4f', `gateRY` = '%.4f', `gateRZ` = '%.4f' WHERE `gateID` = '%d'",
 	    GateData[gateid][gateModel],
 	    GateData[gateid][gateSpeed],
 	    GateData[gateid][gateRadius],
@@ -165,7 +165,7 @@ stock Gate_Save(gateid)
 	);
 	mysql_tquery(dbCon, query);
 
-	format(query, sizeof(query), "UPDATE `gates` SET `gateInterior` = '%d', `gateWorld` = '%d', `gateMoveX` = '%.4f', `gateMoveY` = '%.4f', `gateMoveZ` = '%.4f', `gateMoveRX` = '%.4f', `gateMoveRY` = '%.4f', `gateMoveRZ` = '%.4f', `gateLinkID` = '%d', `gateFaction` = '%d', `gatePass` = '%s', `gateSlow` = '%d' WHERE `gateID` = '%d'",
+	mysql_format(dbCon, query, sizeof(query), "UPDATE `gates` SET `gateInterior` = '%d', `gateWorld` = '%d', `gateMoveX` = '%.4f', `gateMoveY` = '%.4f', `gateMoveZ` = '%.4f', `gateMoveRX` = '%.4f', `gateMoveRY` = '%.4f', `gateMoveRZ` = '%.4f', `gateLinkID` = '%d', `gateFaction` = '%d', `gatePass` = '%e', `gateSlow` = '%d' WHERE `gateID` = '%d'",
 
 	    GateData[gateid][gateInterior],
 	    GateData[gateid][gateWorld],
@@ -177,7 +177,7 @@ stock Gate_Save(gateid)
 	    GateData[gateid][gateMove][5],
 	    GateData[gateid][gateLinkID],
 	    GateData[gateid][gateFaction],
-	    SQL_ReturnEscaped(GateData[gateid][gatePass]),
+	    GateData[gateid][gatePass],
 	    GateData[gateid][gateSlow],
 	    GateData[gateid][gateID]
 	);

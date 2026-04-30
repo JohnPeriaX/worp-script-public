@@ -1350,7 +1350,7 @@ Biz_Save(bizid){
             Biz_Data[bizid][bizWorldExit]
         );
 
-        format(query, sizeof(query), "%s, `bizOwner` = '%d', `bizOwnerName` = '%s', `bizPrice` = '%d', `bizType` = '%d', `bizInfo` = '%s', `bizLocked` = '%d', `bizTotalMoney` = '%d', `bizEnterPrice` = '%d'",
+        mysql_format(dbCon, query, sizeof(query), "%s, `bizOwner` = '%d', `bizOwnerName` = '%e', `bizPrice` = '%d', `bizType` = '%d', `bizInfo` = '%e', `bizLocked` = '%d', `bizTotalMoney` = '%d', `bizEnterPrice` = '%d'",
             query,
             Biz_Data[bizid][bizOwner],
             Biz_Data[bizid][bizOwnerName],

@@ -206,7 +206,7 @@ Car_Save(carid){
 			CarData[carid][carAmmo][3],
 			CarData[carid][carAmmo][4]
 		);
-		format(query, sizeof(query), "%s, `carInsurance` = '%d', `carDamage1` = '%d', `carDamage2` = '%d', `carDamage3` = '%d', `carDamage4` = '%d', `carHealth` = '%f', `carDestroyed` = '%d', `carLock` = '%d', `carGPS` = '%d', `carPlate` = '%s', `carInsideGarage` = '%d', `carDrivingLicense` = '%d'",
+		mysql_format(dbCon, query, sizeof(query), "%s, `carInsurance` = '%d', `carDamage1` = '%d', `carDamage2` = '%d', `carDamage3` = '%d', `carDamage4` = '%d', `carHealth` = '%f', `carDestroyed` = '%d', `carLock` = '%d', `carGPS` = '%d', `carPlate` = '%e', `carInsideGarage` = '%d', `carDrivingLicense` = '%d'",
 			query,
 			CarData[carid][carInsurance],
 			CarData[carid][carDamage][0],
@@ -642,7 +642,7 @@ public FetchVehiclePlate(carid)
 
 	format(name, sizeof(name), RandomPlate());
 
-    format(query, sizeof(query), "SELECT `carPlate` FROM `cars` WHERE `carPlate` = '%s' LIMIT 1", name);
+    mysql_format(dbCon, query, sizeof(query), "SELECT `carPlate` FROM `cars` WHERE `carPlate` = '%e' LIMIT 1", name);
 	mysql_tquery(dbCon, query, "CheckVehiclePlate", "is", carid, name);
 }
 

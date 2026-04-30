@@ -103,8 +103,8 @@ Entrance_Save(entranceid)
 	new
 	    query[1024];
 
-	format(query, sizeof(query), "UPDATE `entrances` SET `entranceName` = '%s', `entranceIcon` = '%d', `entranceLocked` = '%d', `entrancePosX` = '%.4f', `entrancePosY` = '%.4f', `entrancePosZ` = '%.4f', `entrancePosA` = '%.4f', `entranceIntX` = '%.4f', `entranceIntY` = '%.4f', `entranceIntZ` = '%.4f', `entranceIntA` = '%.4f', `entranceInterior` = '%d', `entranceExterior` = '%d', `entranceExteriorVW` = '%d', `entranceType` = '%d'",
-	    SQL_ReturnEscaped(EntranceData[entranceid][entranceName]),
+	mysql_format(dbCon, query, sizeof(query), "UPDATE `entrances` SET `entranceName` = '%e', `entranceIcon` = '%d', `entranceLocked` = '%d', `entrancePosX` = '%.4f', `entrancePosY` = '%.4f', `entrancePosZ` = '%.4f', `entrancePosA` = '%.4f', `entranceIntX` = '%.4f', `entranceIntY` = '%.4f', `entranceIntZ` = '%.4f', `entranceIntA` = '%.4f', `entranceInterior` = '%d', `entranceExterior` = '%d', `entranceExteriorVW` = '%d', `entranceType` = '%d'",
+	    EntranceData[entranceid][entranceName],
 	    EntranceData[entranceid][entranceIcon],
 	    EntranceData[entranceid][entranceLocked],
 	    EntranceData[entranceid][entrancePos][0],
@@ -120,11 +120,11 @@ Entrance_Save(entranceid)
 	    EntranceData[entranceid][entranceExteriorVW],
 	    EntranceData[entranceid][entranceType]
 	);
-	format(query, sizeof(query), "%s, `entranceCustom` = '%d', `entranceWorld` = '%d', `entranceMessage` = '%s', `entranceFaction` = '%d', `entranceProducts` = '%d' WHERE `entranceID` = '%d'",
+	mysql_format(dbCon, query, sizeof(query), "%s, `entranceCustom` = '%d', `entranceWorld` = '%d', `entranceMessage` = '%e', `entranceFaction` = '%d', `entranceProducts` = '%d' WHERE `entranceID` = '%d'",
 	    query,
 	    EntranceData[entranceid][entranceCustom],
 	    EntranceData[entranceid][entranceWorld],
-		SQL_ReturnEscaped(EntranceData[entranceid][entranceMessage]),
+		EntranceData[entranceid][entranceMessage],
 		EntranceData[entranceid][entranceFaction],
 		EntranceData[entranceid][entranceProducts],
 	    EntranceData[entranceid][entranceID]

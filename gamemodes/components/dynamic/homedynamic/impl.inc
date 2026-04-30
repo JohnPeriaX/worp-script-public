@@ -100,11 +100,11 @@ Home_Save(homeid){
     new
 	    query[2056];
 
-    format(query, sizeof(query), "UPDATE `homes` SET `homeOwner` = '%d', `homePrice` = '%d', `homeOwnerName` = '%s', `homeName` = '%s', `homeEnterPosX` = '%.4f', `homeEnterPosY` = '%.4f', `homeEnterPosZ` = '%.4f', `homeEnterPosA` = '%.4f', `homeExitPosX` = '%.4f', `homeExitPosY` = '%.4f', `homeExitPosZ` = '%.4f', `homeExitPosA` = '%.4f', `homeExitInt` = '%d', `homeEnterInt` = '%d', `homeEnterWorld` = '%d'",
+    mysql_format(dbCon, query, sizeof(query), "UPDATE `homes` SET `homeOwner` = '%d', `homePrice` = '%d', `homeOwnerName` = '%e', `homeName` = '%e', `homeEnterPosX` = '%.4f', `homeEnterPosY` = '%.4f', `homeEnterPosZ` = '%.4f', `homeEnterPosA` = '%.4f', `homeExitPosX` = '%.4f', `homeExitPosY` = '%.4f', `homeExitPosZ` = '%.4f', `homeExitPosA` = '%.4f', `homeExitInt` = '%d', `homeEnterInt` = '%d', `homeEnterWorld` = '%d'",
 	    HomeData[homeid][homeOwner],
 	    HomeData[homeid][homePrice],
-        SQL_ReturnEscaped(HomeData[homeid][homeOwnerName]),
-	    SQL_ReturnEscaped(HomeData[homeid][homeName]),
+        HomeData[homeid][homeOwnerName],
+	    HomeData[homeid][homeName],
 	    HomeData[homeid][homeEnterPos][0],
 	    HomeData[homeid][homeEnterPos][1],
 	    HomeData[homeid][homeEnterPos][2],
@@ -446,7 +446,7 @@ HousePutItem(playerid, homeid, const item[], model, quantity, ammo = 0, level = 
                         HouseStorage[homeid][itemid][hItemSlot] = itemid;
                         format(HouseStorage[homeid][itemid][hItemName], 64, item);
 
-                        format(string, sizeof(string), "INSERT INTO `homestorage` (`ID`, `itemName`, `itemModel`, `itemQuantity`, `itemAmmo`, `itemLevel`, `itemSlot`) VALUES('%d', '%s', '%d', '%d', '%d', '%d', '%d')", HomeData[homeid][homeID], item, model, amountnew, ammo, level, itemid);
+                        mysql_format(dbCon, string, sizeof(string), "INSERT INTO `homestorage` (`ID`, `itemName`, `itemModel`, `itemQuantity`, `itemAmmo`, `itemLevel`, `itemSlot`) VALUES('%d', '%e', '%d', '%d', '%d', '%d', '%d')", HomeData[homeid][homeID], item, model, amountnew, ammo, level, itemid);
                         mysql_tquery(dbCon, string, "OnStorageAdd", "dd", homeid, itemid);
                         Log_Write("logs/homeadditems.txt", "[%s] %s (level: %d) Add to home %s amount = %d, Total: %d", ReturnDate(), item, HouseStorage[homeid][itemid][hItemLevel], HomeData[homeid][homeOwnerName], amountnew, HouseStorage[homeid][itemid][hItemQuantity]);
                         return itemid;
@@ -467,7 +467,7 @@ HousePutItem(playerid, homeid, const item[], model, quantity, ammo = 0, level = 
                     HouseStorage[homeid][itemid1][hItemSlot] = itemid;
                     format(HouseStorage[homeid][itemid1][hItemName], 64, item);
 
-                    format(string, sizeof(string), "INSERT INTO `homestorage` (`ID`, `itemName`, `itemModel`, `itemQuantity`, `itemAmmo`, `itemLevel`, `itemSlot`) VALUES('%d', '%s', '%d', '%d', '%d', '%d', '%d')", HomeData[homeid][homeID], item, model, HomeData[homeid][homeItemAmount], ammo, level, itemid1);
+                    mysql_format(dbCon, string, sizeof(string), "INSERT INTO `homestorage` (`ID`, `itemName`, `itemModel`, `itemQuantity`, `itemAmmo`, `itemLevel`, `itemSlot`) VALUES('%d', '%e', '%d', '%d', '%d', '%d', '%d')", HomeData[homeid][homeID], item, model, HomeData[homeid][homeItemAmount], ammo, level, itemid1);
                     mysql_tquery(dbCon, string, "OnStorageAdd", "dd", homeid, itemid1);
                     Log_Write("logs/homeadditems.txt", "[%s] %s (level: %d) Add to home %s amount = %d, Total: %d", ReturnDate(), item, HouseStorage[homeid][itemid1][hItemLevel], HomeData[homeid][homeOwnerName], HomeData[homeid][homeItemAmount], HouseStorage[homeid][itemid1][hItemQuantity]);
                     if(itemid2 == -1) {
@@ -487,7 +487,7 @@ HousePutItem(playerid, homeid, const item[], model, quantity, ammo = 0, level = 
                     HouseStorage[homeid][itemid2][hItemSlot] = itemid2;
                     format(HouseStorage[homeid][itemid2][hItemName], 64, item);
 
-                    format(string, sizeof(string), "INSERT INTO `homestorage` (`ID`, `itemName`, `itemModel`, `itemQuantity`, `itemAmmo`, `itemLevel`, `itemSlot`) VALUES('%d', '%s', '%d', '%d', '%d', '%d', '%d')", HomeData[homeid][homeID], item, model, newamount, ammo, level, itemid2);
+                    mysql_format(dbCon, string, sizeof(string), "INSERT INTO `homestorage` (`ID`, `itemName`, `itemModel`, `itemQuantity`, `itemAmmo`, `itemLevel`, `itemSlot`) VALUES('%d', '%e', '%d', '%d', '%d', '%d', '%d')", HomeData[homeid][homeID], item, model, newamount, ammo, level, itemid2);
                     mysql_tquery(dbCon, string, "OnStorageAdd", "dd", homeid, itemid2);
                     Log_Write("logs/homeadditems.txt", "[%s] %s (level: %d) Add to home %s amount = %d, Total: %d", ReturnDate(), item, HouseStorage[homeid][itemid2][hItemLevel], HomeData[homeid][homeOwnerName], newamount, HouseStorage[homeid][itemid2][hItemQuantity]);
                     return itemid2;
@@ -523,7 +523,7 @@ HousePutItem(playerid, homeid, const item[], model, quantity, ammo = 0, level = 
                         HouseStorage[homeid][itemid][hItemSlot] = itemid;
                         format(HouseStorage[homeid][itemid][hItemName], 64, item);
 
-                        format(string, sizeof(string), "INSERT INTO `homestorage` (`ID`, `itemName`, `itemModel`, `itemQuantity`, `itemAmmo`, `itemLevel`, `itemSlot`) VALUES('%d', '%s', '%d', '%d', '%d', '%d', '%d')", HomeData[homeid][homeID], item, model, amountnew, ammo, level, itemid);
+                        mysql_format(dbCon, string, sizeof(string), "INSERT INTO `homestorage` (`ID`, `itemName`, `itemModel`, `itemQuantity`, `itemAmmo`, `itemLevel`, `itemSlot`) VALUES('%d', '%e', '%d', '%d', '%d', '%d', '%d')", HomeData[homeid][homeID], item, model, amountnew, ammo, level, itemid);
                         mysql_tquery(dbCon, string, "OnStorageAdd", "dd", homeid, itemid);
                         Log_Write("logs/homeadditems.txt", "[%s] %s (level: %d) Add to home %s amount = %d, Total: %d", ReturnDate(), item, HouseStorage[homeid][itemid][hItemLevel], HomeData[homeid][homeOwnerName], amountnew, HouseStorage[homeid][itemid][hItemQuantity]);
                         return itemid;
@@ -542,7 +542,7 @@ HousePutItem(playerid, homeid, const item[], model, quantity, ammo = 0, level = 
                     HouseStorage[homeid][itemid][hItemSlot] = itemid;
                     format(HouseStorage[homeid][itemid][hItemName], 64, item);
 
-                    format(string, sizeof(string), "INSERT INTO `homestorage` (`ID`, `itemName`, `itemModel`, `itemQuantity`, `itemAmmo`, `itemLevel`, `itemSlot`) VALUES('%d', '%s', '%d', '%d', '%d', '%d', '%d')", HomeData[homeid][homeID], item, model, quantity, ammo, level, itemid);
+                    mysql_format(dbCon, string, sizeof(string), "INSERT INTO `homestorage` (`ID`, `itemName`, `itemModel`, `itemQuantity`, `itemAmmo`, `itemLevel`, `itemSlot`) VALUES('%d', '%e', '%d', '%d', '%d', '%d', '%d')", HomeData[homeid][homeID], item, model, quantity, ammo, level, itemid);
                     mysql_tquery(dbCon, string, "OnStorageAdd", "dd", homeid, itemid);
                     Log_Write("logs/homeadditems.txt", "[%s] %s (level: %d) Add to home %s amount = %d, Total: %d", ReturnDate(), item, HouseStorage[homeid][itemid][hItemLevel], HomeData[homeid][homeOwnerName], quantity, HouseStorage[homeid][itemid][hItemQuantity]);
                     return itemid;
@@ -564,7 +564,7 @@ HousePutItem(playerid, homeid, const item[], model, quantity, ammo = 0, level = 
                 HouseStorage[homeid][itemid][hItemSlot] = itemid;
                 format(HouseStorage[homeid][itemid][hItemName], 64, item);
 
-                format(string, sizeof(string), "INSERT INTO `homestorage` (`ID`, `itemName`, `itemModel`, `itemQuantity`, `itemAmmo`, `itemLevel`, `itemSlot`) VALUES('%d', '%s', '%d', '%d', '%d', '%d', '%d')", HomeData[homeid][homeID], item, model, quantity, ammo, level, itemid);
+                mysql_format(dbCon, string, sizeof(string), "INSERT INTO `homestorage` (`ID`, `itemName`, `itemModel`, `itemQuantity`, `itemAmmo`, `itemLevel`, `itemSlot`) VALUES('%d', '%e', '%d', '%d', '%d', '%d', '%d')", HomeData[homeid][homeID], item, model, quantity, ammo, level, itemid);
                 mysql_tquery(dbCon, string, "OnStorageAdd", "dd", homeid, itemid);
                 Log_Write("logs/homeadditems.txt", "[%s] %s (level: %d) Add to home %s amount += %d, Total: %d", ReturnDate(), item, HouseStorage[homeid][itemid][hItemLevel], HomeData[homeid][homeOwnerName], quantity, HouseStorage[homeid][itemid][hItemQuantity]);
                 return itemid;
@@ -585,7 +585,7 @@ HousePutItem(playerid, homeid, const item[], model, quantity, ammo = 0, level = 
                     HouseStorage[homeid][itemid][hItemSlot] = itemid;
                     format(HouseStorage[homeid][itemid][hItemName], 64, item);
 
-                    format(string, sizeof(string), "INSERT INTO `homestorage` (`ID`, `itemName`, `itemModel`, `itemQuantity`, `itemAmmo`, `itemLevel`, `itemSlot`) VALUES('%d', '%s', '%d', '%d', '%d', '%d', '%d')", HomeData[homeid][homeID], item, model, quantity, ammo, level, itemid);
+                    mysql_format(dbCon, string, sizeof(string), "INSERT INTO `homestorage` (`ID`, `itemName`, `itemModel`, `itemQuantity`, `itemAmmo`, `itemLevel`, `itemSlot`) VALUES('%d', '%e', '%d', '%d', '%d', '%d', '%d')", HomeData[homeid][homeID], item, model, quantity, ammo, level, itemid);
                     mysql_tquery(dbCon, string, "OnStorageAdd", "dd", homeid, itemid);
                     Log_Write("logs/homeadditems.txt", "[%s] %s (level: %d) Add to home %s amount += %d, Total: %d", ReturnDate(), item, HouseStorage[homeid][itemid][hItemLevel], HomeData[homeid][homeOwnerName], quantity, HouseStorage[homeid][itemid][hItemQuantity]);
                     return itemid;

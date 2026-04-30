@@ -230,7 +230,7 @@ Dialog:TransferCash(playerid, response, listitem, inputtext[])
         SendAdminsMessage(1, COLOR_YELLOW, string);
 
 		new query[256];
-		format(query, sizeof(query), "INSERT INTO `transfer_logs` (`sendID`, `sendName`, `reciveID`, `reciveName`, `amount`, `date`) VALUES('%d', '%s', '%d', '%s', '%d', '%s')", PlayerData[playerid][pID], ReturnName(playerid),
+		mysql_format(dbCon, query, sizeof(query), "INSERT INTO `transfer_logs` (`sendID`, `sendName`, `reciveID`, `reciveName`, `amount`, `date`) VALUES('%d', '%e', '%d', '%e', '%d', '%e')", PlayerData[playerid][pID], ReturnName(playerid),
 		PlayerData[PlayerData[playerid][pTransfer]][pID], ReturnName(PlayerData[playerid][pTransfer]), amount*1, ReturnDate());
 		mysql_tquery(dbCon, query);
 	
@@ -311,7 +311,7 @@ Dialog:TransferMobileCash(playerid, response, listitem, inputtext[])
         SendAdminsMessage(1, COLOR_YELLOW, string);
 	
 		new query[256];
-		format(query, sizeof(query), "INSERT INTO `transfer_logs` (`sendID`, `sendName`, `reciveID`, `reciveName`, `amount`, `date`) VALUES('%d', '%s', '%d', '%s', '%d', '%s')", PlayerData[playerid][pID], ReturnName(playerid),
+		mysql_format(dbCon, query, sizeof(query), "INSERT INTO `transfer_logs` (`sendID`, `sendName`, `reciveID`, `reciveName`, `amount`, `date`) VALUES('%d', '%e', '%d', '%e', '%d', '%e')", PlayerData[playerid][pID], ReturnName(playerid),
 		PlayerData[PlayerData[playerid][pTransfer]][pID], ReturnName(PlayerData[playerid][pTransfer]), amount*1, ReturnDate());
 		mysql_tquery(dbCon, query);
 

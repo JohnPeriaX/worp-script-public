@@ -79,8 +79,8 @@ Group_Save(groupid)
 	new
 	    query[2048];
 
-	format(query, sizeof(query), "UPDATE `groups` SET `groupName` = '%s', `groupColor` = '%d', `groupType` = '%d', `groupRanks` = '%d', `groupLockerPosX` = '%.4f', `groupLockerPosY` = '%.4f', `groupLockerPosZ` = '%.4f', `groupLockerInt` = '%d', `groupLockerWorld` = '%d'",
-		SQL_ReturnEscaped(GroupData[groupid][groupName]),
+	mysql_format(dbCon, query, sizeof(query), "UPDATE `groups` SET `groupName` = '%e', `groupColor` = '%d', `groupType` = '%d', `groupRanks` = '%d', `groupLockerPosX` = '%.4f', `groupLockerPosY` = '%.4f', `groupLockerPosZ` = '%.4f', `groupLockerInt` = '%d', `groupLockerWorld` = '%d'",
+		GroupData[groupid][groupName],
 		GroupData[groupid][groupColor],
 		GroupData[groupid][groupType],
 		GroupData[groupid][groupRanks],
@@ -136,7 +136,7 @@ stock Group_SaveRanks(groupid)
 	new
 	    query[1024];
 
-	format(query, sizeof(query), "UPDATE `groups` SET `groupRank1` = '%s', `groupRank2` = '%s', `groupRank3` = '%s', `groupRank4` = '%s', `groupRank5` = '%s', `groupRank6` = '%s', `groupRank7` = '%s', `groupRank8` = '%s', `groupRank9` = '%s'",
+	mysql_format(dbCon, query, sizeof(query), "UPDATE `groups` SET `groupRank1` = '%e', `groupRank2` = '%e', `groupRank3` = '%e', `groupRank4` = '%e', `groupRank5` = '%e', `groupRank6` = '%e', `groupRank7` = '%e', `groupRank8` = '%e', `groupRank9` = '%e'",
 	    GroupRanks[groupid][0],
 	    GroupRanks[groupid][1],
 	    GroupRanks[groupid][2],
@@ -147,7 +147,7 @@ stock Group_SaveRanks(groupid)
 		GroupRanks[groupid][7],
 		GroupRanks[groupid][8]
 	);
-	format(query, sizeof(query), "%s, `groupRank10` = '%s', `groupRank11` = '%s', `groupRank12` = '%s', `groupRank13` = '%s', `groupRank14` = '%s', `groupRank15` = '%s', `groupRank16` = '%s' WHERE `groupID` = '%d'",
+	mysql_format(dbCon, query, sizeof(query), "%s, `groupRank10` = '%e', `groupRank11` = '%e', `groupRank12` = '%e', `groupRank13` = '%e', `groupRank14` = '%e', `groupRank15` = '%e', `groupRank16` = '%e' WHERE `groupID` = '%d'",
 		query,
 		GroupRanks[groupid][9],
 		GroupRanks[groupid][10],
@@ -952,16 +952,13 @@ Dialog:SetRankName(playerid, response, listitem, inputtext[])
 		format(GroupRanks[PlayerData[playerid][pGroupEdit]][PlayerData[playerid][pSelectedSlot]], 32, inputtext);
 
 		new
-		    query[128],
-			set_rank[32],
-			clean_rank[32];
-
-        mysql_escape_string(inputtext,clean_rank);
+		    query[256],
+			set_rank[32];
 
         format(set_rank, 32, "groupRank%d", PlayerData[playerid][pSelectedSlot] + 1);
-		format(query, sizeof(query), "UPDATE `groups` SET `%s` = '%s' WHERE `groupID` = '%d'",
+		mysql_format(dbCon, query, sizeof(query), "UPDATE `groups` SET `%s` = '%e' WHERE `groupID` = '%d'",
 		    set_rank,
-		    clean_rank,
+		    inputtext,
 		    GroupData[PlayerData[playerid][pGroupEdit]][groupID]
 		);
 		mysql_tquery(dbCon, query);

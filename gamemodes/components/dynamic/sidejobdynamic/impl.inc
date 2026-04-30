@@ -168,7 +168,7 @@ Sidejob_Save(sidejobid)
 	new
 	    query[1536];
 
-	format(query, sizeof(query), "UPDATE `sidejobs` SET `sidejobName` = '%s', `sidejobType` = '%d', `sidejobPosX` = '%.4f', `sidejobPosY` = '%.4f', `sidejobPosZ` = '%.4f', `sidejobInt` = '%d', `sidejobWorld` = '%d', `sidejobPointX` = '%.4f', `sidejobPointY` = '%.4f', `sidejobPointZ` = '%.4f', `sidejobPointInt` = '%d', `sidejobPointWorld` = '%d' WHERE `sidejobID` = '%d'",
+	mysql_format(dbCon, query, sizeof(query), "UPDATE `sidejobs` SET `sidejobName` = '%e', `sidejobType` = '%d', `sidejobPosX` = '%.4f', `sidejobPosY` = '%.4f', `sidejobPosZ` = '%.4f', `sidejobInt` = '%d', `sidejobWorld` = '%d', `sidejobPointX` = '%.4f', `sidejobPointY` = '%.4f', `sidejobPointZ` = '%.4f', `sidejobPointInt` = '%d', `sidejobPointWorld` = '%d' WHERE `sidejobID` = '%d'",
 		SideJobData[sidejobid][sidejobName],
 		SideJobData[sidejobid][sidejobType],
 		SideJobData[sidejobid][sidejobPos][0],

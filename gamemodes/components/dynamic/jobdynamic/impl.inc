@@ -562,7 +562,7 @@ Job_Save(jobid)
 	new
 	    query[1536];
 
-	format(query, sizeof(query), "UPDATE `jobs` SET `jobName` = '%s', `jobType` = '%d', `jobPosX` = '%.4f', `jobPosY` = '%.4f', `jobPosZ` = '%.4f', `jobInterior` = '%d', `jobWorld` = '%d', `jobPointX` = '%.4f', `jobPointY` = '%.4f', `jobPointZ` = '%.4f', `jobPoint2X` = '%.4f', `jobPoint2Y` = '%.4f', `jobPoint2Z` = '%.4f'",
+	mysql_format(dbCon, query, sizeof(query), "UPDATE `jobs` SET `jobName` = '%e', `jobType` = '%d', `jobPosX` = '%.4f', `jobPosY` = '%.4f', `jobPosZ` = '%.4f', `jobInterior` = '%d', `jobWorld` = '%d', `jobPointX` = '%.4f', `jobPointY` = '%.4f', `jobPointZ` = '%.4f', `jobPoint2X` = '%.4f', `jobPoint2Y` = '%.4f', `jobPoint2Z` = '%.4f'",
 		JobData[jobid][jobName],
 		JobData[jobid][jobType],
 		JobData[jobid][jobPos][0],
