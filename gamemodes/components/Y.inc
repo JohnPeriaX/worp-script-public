@@ -17,12 +17,12 @@
 	#include "jobs\header"
 	#include "sidejobs\header"
 	#include "system\header"
-	#include "worp_inventory\header"
+	//#include "worp_inventory\header"
 
 	#include "voice\header"
 	#define Y_@@@@_HEADER
 #elseif !defined Y_@@@@_END
-	
+
 	#include "core\impl"
 
 	#include "logger\impl"
@@ -35,8 +35,8 @@
 	#include "jobs\impl"
 	#include "sidejobs\impl"
 	#include "system\impl"
-	#include "worp_inventory\impl"
-    
+	//#include "worp_inventory\impl"
+
 	#include "voice\impl"
 
 	#include "reset"
