@@ -104,7 +104,7 @@ ShowPlayerTrackAirDrop(playerid){
 Dialog:TrackAirDrop(playerid, response, listitem, inputtext[]){
     if(!response) return 1;
     if(response){
-        if(listitem >= 0 && listitem <= MAX_AIR_DROPS){
+        if(listitem >= 0 && listitem < MAX_AIR_DROPS){
             new airdropid = PlayerGetTrackAirDropList[playerid][listitem];
             if(airdropid != -1 && Iter_Contains(Iter_Airdrop, airdropid)){
                 PlayerTrackAirDropPlayerID[playerid] = AirDropData[airdropid][AirDropPlayerGet];
@@ -137,7 +137,7 @@ ShowPlayerAirDropList(playerid){
 Dialog:FindAirDrop(playerid, response, listitem, inputtext[]){
     if(!response) return 1;
     if(response){
-        if(listitem >= 0 && listitem <= MAX_AIR_DROPS){
+        if(listitem >= 0 && listitem < MAX_AIR_DROPS){
             new airdropid = PlayerGetAirDropList[playerid][listitem];
             if(airdropid != -1 && Iter_Contains(Iter_Airdrop, airdropid)){
                 PlayerIsCheckpointAirDrop[playerid] = airdropid;
