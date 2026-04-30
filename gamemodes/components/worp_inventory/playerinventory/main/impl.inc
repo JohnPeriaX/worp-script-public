@@ -646,7 +646,7 @@ Player_Inventory_AddItem(playerid, const additemName[], additemModel, additemAmo
 
 					//Insert SQL
 					mysql_format(dbCon, query, sizeof query, "INSERT INTO `inventory` (`itemOwner`, `itemName`, `itemKey`, `itemQuantity`, `itemAmmo`, `itemDate`, `itemLevel`, `itemWeight`, `itemSlot`) \
-					VALUES ('%d', '%s', '%d', '%d', '%d', '%s', '%d', '%f', '%d')",
+					VALUES ('%d', '%e', '%d', '%d', '%d', '%e', '%d', '%f', '%d')",
 						PlayerInventoryData[playerid][itemid][itemOwner],
 						PlayerInventoryData[playerid][itemid][itemName],
 						PlayerInventoryData[playerid][itemid][itemModel],
@@ -680,7 +680,7 @@ Player_Inventory_AddItem(playerid, const additemName[], additemModel, additemAmo
 
 				//Insert SQL
 				mysql_format(dbCon, query, sizeof query, "INSERT INTO `inventory` (`itemOwner`, `itemName`, `itemKey`, `itemQuantity`, `itemAmmo`, `itemDate`, `itemLevel`, `itemWeight`, `itemSlot`) \
-				VALUES ('%d', '%s', '%d', '%d', '%d', '%s', '%d', '%f', '%d')",
+				VALUES ('%d', '%e', '%d', '%d', '%d', '%e', '%d', '%f', '%d')",
 					PlayerInventoryData[playerid][additemSlot][itemOwner],
 					PlayerInventoryData[playerid][additemSlot][itemName],
 					PlayerInventoryData[playerid][additemSlot][itemModel],
