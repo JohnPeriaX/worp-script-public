@@ -922,8 +922,9 @@ Dialog:PlayerVehicleDestroy(playerid, response, listitem, inputtext[]){
 		return 1;
 
 	if(response){
-		if(listitem >= 0 && listitem <= MAX_OWNABLE_CARS){
+		if(listitem >= 0 && listitem < MAX_OWNABLE_CARS){
 			new carid = GetCarIDDestroy[playerid][listitem];
+			if(carid < 0) return 0;
 			new string[150];
 			GetCarIDDestroyConfirm[playerid] = carid;
 
@@ -1771,8 +1772,9 @@ Dialog:TrackerVehicle(playerid, response, listitem, inputtext[]){
 		return 1;
 
 	if(response){
-		if(listitem >= 0 && listitem <= MAX_OWNABLE_CARS){
+		if(listitem >= 0 && listitem < MAX_OWNABLE_CARS){
 			new carid = GetCarIDTracker[playerid][listitem];
+			if(carid < 0) return 0;
 
 			if(CarData[carid][carDestroyed] == 1) return SendClientMessageEx(playerid, COLOR_RED, "- ยานพาหนะ %s ของคุณถูกทำลาย, คุณจะต้องไปกูคืนก่อนเพื่อจะสามารถใช้ได้", ReturnVehicleModelName(CarData[carid][carModel]));
 
