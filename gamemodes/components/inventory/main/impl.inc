@@ -746,7 +746,7 @@ PlayerInventory_AddItem(playerid, const item[], model = MODEL_NULL, amount = 1, 
                         Inventory_Player[playerid][itemid][itemAmmo] = ammo;
                         Inventory_Player[playerid][itemid][itemSlot] = itemid;
                         format(Inventory_Player[playerid][itemid][itemName], 64, item);
-                        mysql_format(dbCon, string, sizeof(string), "INSERT INTO `inventory` (`itemOwner`, `itemName`, `itemKey`, `itemQuantity`, `itemLevel`, `itemAmmo`, `itemSlot`) VALUES ('%d', '%s', '%d', '%d', '%d', '%d', '%d')", PlayerData[playerid][pID], item, model, amountnew, level, ammo, itemid);
+                        mysql_format(dbCon, string, sizeof(string), "INSERT INTO `inventory` (`itemOwner`, `itemName`, `itemKey`, `itemQuantity`, `itemLevel`, `itemAmmo`, `itemSlot`) VALUES ('%d', '%e', '%d', '%d', '%d', '%d', '%d')", PlayerData[playerid][pID], item, model, amountnew, level, ammo, itemid);
                         mysql_tquery(dbCon, string, "OnInventory_Add", "dd", playerid, itemid);
                         Log_Write("logs/additems.txt", "[%s] Add %s (level: %d) amount %d Total : %d", ReturnDate(), Inventory_Player[playerid][itemid][itemName], Inventory_Player[playerid][itemid][itemLevel], amountnew, Inventory_Player[playerid][itemid][itemQuantity]);
                         if(PlayerInventoryStatus[playerid]) OnPlayerInventory_PickupSlot(playerid, itemid);
@@ -767,7 +767,7 @@ PlayerInventory_AddItem(playerid, const item[], model = MODEL_NULL, amount = 1, 
                     Inventory_Player[playerid][itemid1][itemAmmo] = ammo;
                     Inventory_Player[playerid][itemid1][itemSlot] = itemid1;
                     format(Inventory_Player[playerid][itemid1][itemName], 64, item);
-                    mysql_format(dbCon, string, sizeof(string), "INSERT INTO `inventory` (`itemOwner`, `itemName`, `itemKey`, `itemQuantity`, `itemLevel`, `itemAmmo`, `itemSlot`) VALUES ('%d', '%s', '%d', '%d', '%d', '%d', '%d')", PlayerData[playerid][pID], item, model, PlayerData[playerid][pItemAmount], level, ammo, itemid1);
+                    mysql_format(dbCon, string, sizeof(string), "INSERT INTO `inventory` (`itemOwner`, `itemName`, `itemKey`, `itemQuantity`, `itemLevel`, `itemAmmo`, `itemSlot`) VALUES ('%d', '%e', '%d', '%d', '%d', '%d', '%d')", PlayerData[playerid][pID], item, model, PlayerData[playerid][pItemAmount], level, ammo, itemid1);
                     mysql_tquery(dbCon, string, "OnInventory_Add", "dd", playerid, itemid1);
                     Log_Write("logs/additems.txt", "[%s] Add %s (level: %d) amount %d Total : %d", ReturnDate(), Inventory_Player[playerid][itemid1][itemName], Inventory_Player[playerid][itemid1][itemLevel], amount, Inventory_Player[playerid][itemid1][itemQuantity]);
                     if(PlayerInventoryStatus[playerid]) OnPlayerInventory_PickupSlot(playerid, itemid1);
@@ -782,7 +782,7 @@ PlayerInventory_AddItem(playerid, const item[], model = MODEL_NULL, amount = 1, 
                     Inventory_Player[playerid][itemid2][itemAmmo] = ammo;
                     Inventory_Player[playerid][itemid2][itemSlot] = itemid2;
                     format(Inventory_Player[playerid][itemid2][itemName], 64, item);
-                    mysql_format(dbCon, string, sizeof(string), "INSERT INTO `inventory` (`itemOwner`, `itemName`, `itemKey`, `itemQuantity`, `itemLevel`, `itemAmmo`, `itemSlot`) VALUES ('%d', '%s', '%d', '%d', '%d', '%d', '%d')", PlayerData[playerid][pID], item, model, newamount, level, ammo, itemid2);
+                    mysql_format(dbCon, string, sizeof(string), "INSERT INTO `inventory` (`itemOwner`, `itemName`, `itemKey`, `itemQuantity`, `itemLevel`, `itemAmmo`, `itemSlot`) VALUES ('%d', '%e', '%d', '%d', '%d', '%d', '%d')", PlayerData[playerid][pID], item, model, newamount, level, ammo, itemid2);
                     mysql_tquery(dbCon, string, "OnInventory_Add", "dd", playerid, itemid2);
                     Log_Write("logs/additems.txt", "[%s] Add %s (level: %d) amount %d Total : %d", ReturnDate(), Inventory_Player[playerid][itemid2][itemName], Inventory_Player[playerid][itemid2][itemLevel], newamount, Inventory_Player[playerid][itemid2][itemQuantity]);
                     if(PlayerInventoryStatus[playerid]) OnPlayerInventory_PickupSlot(playerid, itemid2);
@@ -822,7 +822,7 @@ PlayerInventory_AddItem(playerid, const item[], model = MODEL_NULL, amount = 1, 
                         Inventory_Player[playerid][itemid][itemAmmo] = ammo;
                         Inventory_Player[playerid][itemid][itemSlot] = itemid;
                         format(Inventory_Player[playerid][itemid][itemName], 64, item);
-                        mysql_format(dbCon, string, sizeof(string), "INSERT INTO `inventory` (`itemOwner`, `itemName`, `itemKey`, `itemQuantity`, `itemLevel`, `itemAmmo`, `itemSlot`) VALUES ('%d', '%s', '%d', '%d', '%d', '%d', '%d')", PlayerData[playerid][pID], item, model, amountnew, level, ammo, itemid);
+                        mysql_format(dbCon, string, sizeof(string), "INSERT INTO `inventory` (`itemOwner`, `itemName`, `itemKey`, `itemQuantity`, `itemLevel`, `itemAmmo`, `itemSlot`) VALUES ('%d', '%e', '%d', '%d', '%d', '%d', '%d')", PlayerData[playerid][pID], item, model, amountnew, level, ammo, itemid);
                         mysql_tquery(dbCon, string, "OnInventory_Add", "dd", playerid, itemid);
                         Log_Write("logs/additems.txt", "[%s] Add %s (level: %d) amount %d Total : %d", ReturnDate(), Inventory_Player[playerid][itemid][itemName], Inventory_Player[playerid][itemid][itemLevel], amountnew, Inventory_Player[playerid][itemid][itemQuantity]);
                         if(PlayerInventoryStatus[playerid]) OnPlayerInventory_PickupSlot(playerid, itemid);
@@ -841,7 +841,7 @@ PlayerInventory_AddItem(playerid, const item[], model = MODEL_NULL, amount = 1, 
                     Inventory_Player[playerid][itemid][itemAmmo] = ammo;
                     Inventory_Player[playerid][itemid][itemSlot] = itemid;
                     format(Inventory_Player[playerid][itemid][itemName], 64, item);
-                    mysql_format(dbCon, string, sizeof(string), "INSERT INTO `inventory` (`itemOwner`, `itemName`, `itemKey`, `itemQuantity`, `itemLevel`, `itemAmmo`, `itemSlot`) VALUES ('%d', '%s', '%d', '%d', '%d', '%d', '%d')", PlayerData[playerid][pID], item, model, amount, level, ammo, itemid);
+                    mysql_format(dbCon, string, sizeof(string), "INSERT INTO `inventory` (`itemOwner`, `itemName`, `itemKey`, `itemQuantity`, `itemLevel`, `itemAmmo`, `itemSlot`) VALUES ('%d', '%e', '%d', '%d', '%d', '%d', '%d')", PlayerData[playerid][pID], item, model, amount, level, ammo, itemid);
                     mysql_tquery(dbCon, string, "OnInventory_Add", "dd", playerid, itemid);
                     Log_Write("logs/additems.txt", "[%s] Add %s (level: %d) amount %d Total : %d", ReturnDate(), Inventory_Player[playerid][itemid][itemName], Inventory_Player[playerid][itemid][itemLevel], amount, Inventory_Player[playerid][itemid][itemQuantity]);
                     if(PlayerInventoryStatus[playerid]) OnPlayerInventory_PickupSlot(playerid, itemid);
@@ -864,7 +864,7 @@ PlayerInventory_AddItem(playerid, const item[], model = MODEL_NULL, amount = 1, 
                 Inventory_Player[playerid][itemid][itemAmmo] = ammo;
                 Inventory_Player[playerid][itemid][itemSlot] = itemid;
                 format(Inventory_Player[playerid][itemid][itemName], 64, item);
-                mysql_format(dbCon, string, sizeof(string), "INSERT INTO `inventory` (`itemOwner`, `itemName`, `itemKey`, `itemQuantity`, `itemLevel`, `itemAmmo`, `itemSlot`) VALUES ('%d', '%s', '%d', '%d', '%d', '%d', '%d')", PlayerData[playerid][pID], item, model, amount, level, ammo, itemid);
+                mysql_format(dbCon, string, sizeof(string), "INSERT INTO `inventory` (`itemOwner`, `itemName`, `itemKey`, `itemQuantity`, `itemLevel`, `itemAmmo`, `itemSlot`) VALUES ('%d', '%e', '%d', '%d', '%d', '%d', '%d')", PlayerData[playerid][pID], item, model, amount, level, ammo, itemid);
                 mysql_tquery(dbCon, string, "OnInventory_Add", "dd", playerid, itemid);
                 Log_Write("logs/additems.txt", "[%s] Add %s (level: %d) amount %d Total : %d", ReturnDate(), Inventory_Player[playerid][itemid][itemName], Inventory_Player[playerid][itemid][itemLevel], amount, Inventory_Player[playerid][itemid][itemQuantity]);
                 if(PlayerInventoryStatus[playerid]) OnPlayerInventory_PickupSlot(playerid, itemid);
@@ -885,7 +885,7 @@ PlayerInventory_AddItem(playerid, const item[], model = MODEL_NULL, amount = 1, 
                     Inventory_Player[playerid][itemid][itemAmmo] = ammo;
                     Inventory_Player[playerid][itemid][itemSlot] = itemid;
                     format(Inventory_Player[playerid][itemid][itemName], 64, item);
-                    mysql_format(dbCon, string, sizeof(string), "INSERT INTO `inventory` (`itemOwner`, `itemName`, `itemKey`, `itemQuantity`, `itemLevel`, `itemAmmo`, `itemSlot`) VALUES ('%d', '%s', '%d', '%d', '%d', '%d', '%d')", PlayerData[playerid][pID], item, model, amount, level, ammo, itemid);
+                    mysql_format(dbCon, string, sizeof(string), "INSERT INTO `inventory` (`itemOwner`, `itemName`, `itemKey`, `itemQuantity`, `itemLevel`, `itemAmmo`, `itemSlot`) VALUES ('%d', '%e', '%d', '%d', '%d', '%d', '%d')", PlayerData[playerid][pID], item, model, amount, level, ammo, itemid);
                     mysql_tquery(dbCon, string, "OnInventory_Add", "dd", playerid, itemid);
                     Log_Write("logs/additems.txt", "[%s] Add %s (level: %d) amount %d Total : %d", ReturnDate(), Inventory_Player[playerid][itemid][itemName], Inventory_Player[playerid][itemid][itemLevel], amount, Inventory_Player[playerid][itemid][itemQuantity]);
                     if(PlayerInventoryStatus[playerid]) OnPlayerInventory_PickupSlot(playerid, itemid);
@@ -1724,7 +1724,7 @@ Drop_Item(const item[], model, quantity, level = 0, ammo = 0, Float:x, Float:y, 
         Drop_Data[i][droppedText3D] = CreateDynamic3DTextLabel(string, DROP_COLOR, x, y, z, 10.0, INVALID_PLAYER_ID, INVALID_VEHICLE_ID, 0, World, Int);
         Iter_Add(Iter_DropItem, i);
 
-        format(query, sizeof(query), "INSERT INTO `dropped` (`itemName`, `itemModel`, `itemQuantity`, `itemAmmo`, `itemX`, `itemY`, `itemZ`, `itemInt`, `itemWorld`) VALUES('%s', '%d', '%d', '%d', '%.4f', '%.4f', '%.4f', '%d', '%d')", item, model, quantity, ammo, x, y, z, Int, World);
+        mysql_format(dbCon, query, sizeof(query), "INSERT INTO `dropped` (`itemName`, `itemModel`, `itemQuantity`, `itemAmmo`, `itemX`, `itemY`, `itemZ`, `itemInt`, `itemWorld`) VALUES('%e', '%d', '%d', '%d', '%.4f', '%.4f', '%.4f', '%d', '%d')", item, model, quantity, ammo, x, y, z, Int, World);
 		mysql_tquery(dbCon, query, "OnDroppedItem", "d", i);
         return i;
     }
