@@ -1,0 +1,59 @@
+[19/05/2022, 16:12:13] Update Box Level (level: 0) amount 1 Total : 2
+[19/05/2022, 16:12:13] Update Burger (level: 0) amount 5 Total : 10
+[19/05/2022, 16:12:13] Update Water Drink (level: 0) amount 5 Total : 10
+[19/05/2022, 16:12:13] Update Energy Drink (level: 0) amount 5 Total : 10
+[19/05/2022, 16:15:58] Update Box Level (level: 0) amount 1 Total : 3
+[19/05/2022, 16:15:58] Update Burger (level: 0) amount 5 Total : 15
+[19/05/2022, 16:15:58] Update Water Drink (level: 0) amount 5 Total : 15
+[19/05/2022, 16:15:58] Update Energy Drink (level: 0) amount 5 Total : 15
+[19/05/2022, 16:20:24] Update Box Level (level: 0) amount 1 Total : 4
+[19/05/2022, 16:20:24] Update Burger (level: 0) amount 5 Total : 20
+[19/05/2022, 16:20:24] Update Water Drink (level: 0) amount 5 Total : 20
+[19/05/2022, 16:20:24] Update Energy Drink (level: 0) amount 5 Total : 20
+[19/05/2022, 16:24:46] Update Box Level (level: 0) amount 1 Total : 5
+[19/05/2022, 16:24:46] Update Burger (level: 0) amount 5 Total : 25
+[19/05/2022, 16:24:46] Update Water Drink (level: 0) amount 5 Total : 25
+[19/05/2022, 16:24:46] Update Energy Drink (level: 0) amount 5 Total : 25
+[19/05/2022, 16:27:43] Update Box Level (level: 0) amount 1 Total : 6
+[19/05/2022, 16:27:43] Update Burger (level: 0) amount 5 Total : 30
+[19/05/2022, 16:27:43] Update Water Drink (level: 0) amount 5 Total : 30
+[19/05/2022, 16:27:43] Update Energy Drink (level: 0) amount 5 Total : 30
+[19/05/2022, 16:30:27] Update Box Level (level: 0) amount 1 Total : 7
+[19/05/2022, 16:30:27] Update Burger (level: 0) amount 5 Total : 35
+[19/05/2022, 16:30:27] Update Water Drink (level: 0) amount 5 Total : 35
+[19/05/2022, 16:30:27] Update Energy Drink (level: 0) amount 5 Total : 35
+[19/05/2022, 16:34:12] Update Box Level (level: 0) amount 1 Total : 8
+[19/05/2022, 16:34:12] Update Burger (level: 0) amount 5 Total : 40
+[19/05/2022, 16:34:12] Update Water Drink (level: 0) amount 5 Total : 40
+[19/05/2022, 16:34:12] Update Energy Drink (level: 0) amount 5 Total : 40
+[19/05/2022, 16:37:14] Update Box Level (level: 0) amount 1 Total : 9
+[19/05/2022, 16:37:14] Update Burger (level: 0) amount 5 Total : 45
+[19/05/2022, 16:37:14] Update Water Drink (level: 0) amount 5 Total : 45
+[19/05/2022, 16:37:14] Update Energy Drink (level: 0) amount 5 Total : 45
+[19/05/2022, 16:39:40] Update Box Level (level: 0) amount 1 Total : 10
+[19/05/2022, 16:39:40] Update Burger (level: 0) amount 5 Total : 50
+[19/05/2022, 16:39:40] Update Water Drink (level: 0) amount 5 Total : 50
+[19/05/2022, 16:39:40] Update Energy Drink (level: 0) amount 5 Total : 50
+[19/05/2022, 18:06:33] Add Ore (level: 0) amount 10 Total : 10
+[19/05/2022, 18:06:46] Add Wood (level: 0) amount 15 Total : 15
+[19/05/2022, 18:06:56] Add Fishing Rod (level: 0) amount 1 Total : 1
+[19/05/2022, 18:08:23] Add Wood (level: 0) amount 10 Total : 10
+[19/05/2022, 18:08:57] Add Wooden Crate (level: 0) amount 1 Total : 1
+[19/05/2022, 18:12:32] Add Wood (level: 0) amount 10 Total : 10
+[19/05/2022, 18:13:07] Update Wooden Crate (level: 0) amount 1 Total : 2
+[19/05/2022, 19:50:24] Add Wood (level: 0) amount 50 Total : 50
+[19/05/2022, 19:50:27] Add Wood (level: 0) amount 50 Total : 50
+[19/05/2022, 19:50:28] Add Wood (level: 0) amount 50 Total : 50
+[19/05/2022, 19:50:30] Add Wood (level: 0) amount 50 Total : 50
+[19/05/2022, 19:50:45] Add Wood (level: 0) amount 20 Total : 20
+[19/05/2022, 19:50:51] Add Wood (level: 0) amount 50 Total : 50
+[19/05/2022, 19:50:52] Add Wood (level: 0) amount 50 Total : 50
+[19/05/2022, 19:50:54] Add Wood (level: 0) amount 50 Total : 50
+[19/05/2022, 19:50:56] Add Wood (level: 0) amount 30 Total : 30
+[19/05/2022, 19:51:09] Add Wood (level: 0) amount 20 Total : 20
+[19/05/2022, 19:51:27] Add Ore (level: 0) amount 50 Total : 50
+[19/05/2022, 19:51:29] Add Ore (level: 0) amount 50 Total : 50
+[19/05/2022, 19:51:30] Add Ore (level: 0) amount 50 Total : 50
+[19/05/2022, 19:51:31] Add Ore (level: 0) amount 50 Total : 50
+[19/05/2022, 19:51:42] Add Ore (level: 0) amount 50 Total : 50
+[19/05/2022, 19:51:43] Add Ore (level: 0) amount 50 Total : 50

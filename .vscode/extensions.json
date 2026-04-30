@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "openmp.pawn-development",
+		//"southclaws.vscode-pawn",
+        //"nabeelvalley.easyzoom"
+    ],
+    "unwantedRecommendations": []
+}

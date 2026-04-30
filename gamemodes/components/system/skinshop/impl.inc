@@ -1,0 +1,258 @@
+#if defined _inc_impl
+	#undef _inc_impl
+#endif
+
+forward SkinMale_Load();
+public SkinMale_Load()
+{
+	new
+	    rows;
+
+	cache_get_row_count(rows);
+
+    for (new i = 0; i < rows; i ++) if (i < MAX_SKINS)
+	{
+	    SkinMaleData[i][skinmaleEx] = true;
+
+	    cache_get_value_name_int(i, "skinmaleID", SkinMaleData[i][skinmaleID]);
+	    cache_get_value_name_int(i, "skinmaleModel", SkinMaleData[i][skinmaleModel]);
+
+        count_skinmale++;
+
+	}
+	printf("(( [MYSQL]: Load %d MaleSkins Successfully ))", count_skinmale);
+	return 1;
+}
+
+ShowBuyClothMenu(playerid){
+
+    PlayerShowSkinShopMenu[playerid] = true;
+
+	if(PlayerData[playerid][pGender] == 1){
+        static
+            items[MAX_SKINS],
+            price[MAX_SKINS];
+
+        for (new i = 0; i < MAX_SKINS; i++){
+            if (SkinMaleData[i][skinmaleEx]) {
+                items[i] = SkinMaleData[i][skinmaleModel];
+                price[i] = SkinMaleData[i][skinmaleModel];
+            }
+            else {
+                items[i] = -1;
+                price[i] = -1;
+            }
+        }
+        ShowModelSelectionMenu(playerid, "Clothing", MODEL_SELECTION_SKIN, items, sizeof(items), -10.000000, 0.000000, -20.000000, 1.0, -1, true, price);
+        return 1;
+    }
+
+	if(PlayerData[playerid][pGender] == 2){
+
+        static
+            items[MAX_SKINS],
+            price[MAX_SKINS];
+
+        for (new i = 0; i < MAX_SKINS; i++){
+            if (SkinFeMaleData[i][skinfemaleEx]) {
+                items[i] = SkinFeMaleData[i][skinfemaleModel];
+                price[i] = SkinFeMaleData[i][skinfemaleModel];
+            }
+            else {
+                items[i] = -1;
+                price[i] = -1;
+            }
+        }
+        ShowModelSelectionMenu(playerid, "Clothing", MODEL_SELECTION_SKIN, items, sizeof(items), -10.000000, 0.000000, -20.000000, 1.0, -1, true, price);
+        return 1;
+    }
+	return 1;
+}
+
+forward SkinFeMale_Load();
+public SkinFeMale_Load()
+{
+	new
+	    rows;
+
+	cache_get_row_count(rows);
+
+    for (new i = 0; i < rows; i ++) if (i < MAX_SKINS)
+	{
+	    SkinFeMaleData[i][skinfemaleEx] = true;
+
+	    cache_get_value_name_int(i, "skinfemaleID", SkinFeMaleData[i][skinfemaleID]);
+	    cache_get_value_name_int(i, "skinfemaleModel", SkinFeMaleData[i][skinfemaleModel]);
+
+        count_skinfemale++;
+
+	}
+	printf("(( [MYSQL]: Load %d FemaleSkins Successfully ))", count_skinfemale);
+	return 1;
+}
+
+SkinMale_Save(skinid)
+{
+	new
+	    query[1536];
+
+	format(query, sizeof(query), "UPDATE `skinmales` SET `skinmaleModel` = '%d' WHERE `skinmaleID` = '%d'",
+		SkinMaleData[skinid][skinmaleModel],
+		SkinMaleData[skinid][skinmaleID]
+	);
+	return mysql_tquery(dbCon, query);
+}
+
+SkinMale_Create(skinid){
+    new query[128];
+    for (new i = 0; i != MAX_SKINS; i ++) if (!SkinMaleData[i][skinmaleEx]){
+        SkinMaleData[i][skinmaleEx] = true;
+        SkinMaleData[i][skinmaleModel] = skinid;
+        format(query, sizeof(query), "INSERT INTO `skinmales` (`skinmaleModel`) VALUES('%d')", skinid);
+        mysql_tquery(dbCon, query, "OnSkinMaleCreated", "d", i);
+        return i;
+    }
+    return -1;
+}
+
+forward OnSkinMaleCreated(skinid);
+public OnSkinMaleCreated(skinid)
+{
+	if (skinid == -1 || !SkinMaleData[skinid][skinmaleEx])
+	    return 0;
+
+	SkinMaleData[skinid][skinmaleID] = cache_insert_id();
+	SkinMale_Save(skinid);
+
+	return 1;
+}
+
+CheckSkinMale(skinid){
+    for(new i=0; i<MAX_SKINS; i++){
+        if(SkinMaleData[i][skinmaleEx]){
+            if(SkinMaleData[i][skinmaleModel] == skinid){
+                return 1;
+            }
+        }
+    }
+    return -1;
+}
+
+CMD:addmaleskin(playerid, params[]){
+    if(PlayerData[playerid][pAdmin] >= 1338){
+
+        new skinid;
+        if(sscanf(params, "d", skinid))
+            return SystemMsg(playerid, "/addmaleskin [skinid]");
+
+        new id = -1;
+
+        if(skinid < 0 || skinid > 311)
+            return ErrorMsg(playerid, "ไอดีสกินไม่ถูกต้อง");
+
+        if(CheckSkinMale(skinid) != -1)
+            return ErrorMsg(playerid, "สกินนี้มีอยู่ในฐานข้อมูลแล้ว");
+
+        id = SkinMale_Create(skinid);
+        
+        if(id == -1) return ErrorMsg(playerid, "เซิฟเวอร์ได้สร้างสกินเกินขีดจำกัดแล้ว");
+
+        SendClientMessageEx(playerid, COLOR_YELLOW, "คุณประสบความสำเร็จในการเพิ่มสกินของเพศชาย: %d เรียบร้อยแล้ว", skinid);
+    }
+    return 1;
+}
+
+SkinFeMale_Save(skinid)
+{
+	new
+	    query[1536];
+
+	format(query, sizeof(query), "UPDATE `skinfemales` SET `skinfemaleModel` = '%d' WHERE `skinfemaleID` = '%d'",
+		SkinFeMaleData[skinid][skinfemaleModel],
+		SkinFeMaleData[skinid][skinfemaleID]
+	);
+	return mysql_tquery(dbCon, query);
+}
+
+SkinFeMale_Create(skinid){
+    new query[128];
+    for (new i = 0; i != MAX_SKINS; i ++) if (!SkinFeMaleData[i][skinfemaleEx]){
+        SkinFeMaleData[i][skinfemaleEx] = true;
+        SkinFeMaleData[i][skinfemaleModel] = skinid;
+        format(query, sizeof(query), "INSERT INTO `skinfemales` (`skinfemaleModel`) VALUES('%d')", skinid);
+        mysql_tquery(dbCon, query, "OnSkinFeMaleCreated", "d", i);
+        return i;
+    }
+    return -1;
+}
+
+forward OnSkinFeMaleCreated(skinid);
+public OnSkinFeMaleCreated(skinid)
+{
+	if (skinid == -1 || !SkinFeMaleData[skinid][skinfemaleEx])
+	    return 0;
+
+	SkinFeMaleData[skinid][skinfemaleID] = cache_insert_id();
+	SkinFeMale_Save(skinid);
+
+	return 1;
+}
+
+CheckSkinFeMale(skinid){
+    for(new i=0; i<MAX_SKINS; i++){
+        if(SkinFeMaleData[i][skinfemaleEx]){
+            if(SkinFeMaleData[i][skinfemaleModel] == skinid){
+                return 1;
+            }
+        }
+    }
+    return -1;
+}
+
+CMD:addfemaleskin(playerid, params[]){
+    if(PlayerData[playerid][pAdmin] >= 1338){
+
+        new skinid;
+        if(sscanf(params, "d", skinid))
+            return SystemMsg(playerid, "/addfemaleskin [skinid]");
+
+        new id = -1;
+
+        if(skinid < 0 || skinid > 311)
+            return ErrorMsg(playerid, "ไอดีสกินไม่ถูกต้อง");
+
+        if(CheckSkinFeMale(skinid) != -1)
+            return ErrorMsg(playerid, "สกินนี้มีอยู่ในฐานข้อมูลแล้ว");
+
+        id = SkinFeMale_Create(skinid);
+        
+        if(id == -1) return ErrorMsg(playerid, "เซิฟเวอร์ได้สร้างสกินเกินขีดจำกัดแล้ว");
+
+        SendClientMessageEx(playerid, COLOR_YELLOW, "คุณประสบความสำเร็จในการเพิ่มสกินของเพศหญิง: %d เรียบร้อยแล้ว", skinid);
+    }
+    return 1;
+}
+
+CMD:reloadskin(playerid, params[]){
+    if(PlayerData[playerid][pAdmin] >= 1338){
+
+        for(new i=0; i<MAX_SKINS; i++){
+            if(SkinMaleData[i][skinmaleEx]){
+                SkinMaleData[i][skinmaleEx] = false;
+                SkinMaleData[i][skinmaleModel] = -1;
+            }
+        }
+
+        for(new i=0; i<MAX_SKINS; i++){
+            if(SkinFeMaleData[i][skinfemaleEx]){
+                SkinFeMaleData[i][skinfemaleEx] = false;
+                SkinFeMaleData[i][skinfemaleModel] = -1;
+            }
+        }
+
+        mysql_tquery(dbCon, "SELECT * FROM `skinmales`", "SkinMale_Load", "");
+        mysql_tquery(dbCon, "SELECT * FROM `skinfemales`", "SkinFeMale_Load", "");
+        SendClientMessage(playerid, COLOR_YELLOW, "คุณได้ทำการรีโหลดสกินเรียบร้อยแล้ว");
+    }
+    return 1;
+}

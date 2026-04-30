@@ -1,0 +1,34 @@
+# Ignore everything
+*
+
+# Allow only these files/folders
+!.gitignore
+
+!announce.exe
+!libmariadb.dll
+!log-core.dll
+!log-core2.dll
+!samp-npc.exe
+!samp-server.exe
+!server.cfg
+
+!.vscode/
+!.vscode/**
+
+!scriptfiles/
+!scriptfiles/**
+
+!plugins/
+!plugins/**
+
+!npcmodes/
+!npcmodes/**
+
+!logs/
+!logs/**
+
+!gamemodes/
+!gamemodes/**
+
+!filterscripts/
+!filterscripts/**

@@ -1,0 +1,46 @@
+{
+    "files.encoding": "windows874",
+    "files.autoGuessEncoding": true,
+    "files.eol": "\r\n",
+
+    "files.associations": {
+        "*.pwn": "pawn",
+        "*.inc": "pawn",
+        "pawn.json": "jsonc",
+        "server.cfg": "properties"
+    },
+
+    "editor.detectIndentation": false,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": false,
+    /*"editor.rulers": [
+        100,
+        120
+    ],*/
+
+	"editor.trimAutoWhitespace": true,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+
+    "[pawn]": {
+        "editor.tabSize": 4,
+        "editor.insertSpaces": false,
+        "editor.formatOnSave": false,
+        "editor.defaultFormatter": null
+    },
+
+    "files.exclude": {
+        "**/*.amx": true,
+        "**/.samp": true,
+        "**/.samp/**": true
+    },
+
+    "search.exclude": {
+        "**/*.amx": true,
+        "**/.samp": true,
+        "**/.samp/**": true,
+        "**/node_modules": true
+    },
+
+    "terminal.integrated.scrollback": 10000
+}
