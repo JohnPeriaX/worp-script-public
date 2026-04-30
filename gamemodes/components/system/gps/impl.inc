@@ -350,7 +350,7 @@ DrawPlayerRoute(playerid, routeid, const node_id_array[])
 			x += (tx - x) / dis * ROUTE_ZONE_SIZE;
 			y += (ty - y) / dis * ROUTE_ZONE_SIZE;
 
-			gzid = PlayerGangZoneCreate(playerid, x - ROUTE_ZONE_SIZE/2.0, y - ROUTE_ZONE_SIZE/2.0, x + ROUTE_ZONE_SIZE/2.0, y + ROUTE_ZONE_SIZE/2.0);
+			gzid = CreatePlayerGangZone(playerid, x - ROUTE_ZONE_SIZE/2.0, y - ROUTE_ZONE_SIZE/2.0, x + ROUTE_ZONE_SIZE/2.0, y + ROUTE_ZONE_SIZE/2.0);
 
 			if(gzid != -1 /*IsValidPlayerGangZone(playerid, gzid)*/)
 			{
@@ -401,7 +401,7 @@ DrawPlayerRoute(playerid, routeid, const node_id_array[])
 
 		//printf("%.1f, %.1f // %.1f, %.1f", minx, miny, maxx, maxy);
 
-		gzid = PlayerGangZoneCreate(playerid, minx, miny, maxx, maxy);
+		gzid = CreatePlayerGangZone(playerid, minx, miny, maxx, maxy);
 
 		if(gzid != -1 /*IsValidPlayerGangZone(playerid, gzid)*/)
 		{
