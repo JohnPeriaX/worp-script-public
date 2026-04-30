@@ -1,6 +1,6 @@
 {
     "files.encoding": "windows874",
-    "files.autoGuessEncoding": true,
+    "files.autoGuessEncoding": false,
     "files.eol": "\r\n",
 
     "files.associations": {
