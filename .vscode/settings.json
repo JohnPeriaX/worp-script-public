@@ -6,28 +6,35 @@
     "files.associations": {
         "*.pwn": "pawn",
         "*.inc": "pawn",
-        "pawn.json": "jsonc",
+        "pawn.yaml": "yaml",
+        "pawn.yaml_bak": "yaml",
+        "README.md": "markdown",
         "server.cfg": "properties"
     },
 
-    "editor.detectIndentation": false,
-    "editor.tabSize": 4,
-    "editor.insertSpaces": false,
-    /*"editor.rulers": [
-        100,
-        120
-    ],*/
+    "[markdown]": {
+        "files.encoding": "utf8"
+    },
 
-	"editor.trimAutoWhitespace": true,
-    "files.trimTrailingWhitespace": true,
-    "files.insertFinalNewline": true,
+    "[yaml]": {
+        "files.encoding": "utf8"
+    },
 
     "[pawn]": {
+        "files.encoding": "windows874",
         "editor.tabSize": 4,
         "editor.insertSpaces": false,
         "editor.formatOnSave": false,
         "editor.defaultFormatter": null
     },
+
+    "editor.detectIndentation": false,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": false,
+
+    "editor.trimAutoWhitespace": true,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
 
     "files.exclude": {
         "**/*.amx": true,

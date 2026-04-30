@@ -1,9 +1,11 @@
 # Ignore everything
 *
 
-# Allow only these files/folders
+# Allow config/docs
 !.gitignore
+!README.md
 
+# Allow server files
 !announce.exe
 !libmariadb.dll
 !log-core.dll
@@ -12,6 +14,7 @@
 !samp-server.exe
 !server.cfg
 
+# Allow folders
 !.vscode/
 !.vscode/**
 
