@@ -323,6 +323,7 @@ public SetCameraToHospital(playerid){
 
 forward OnCheatDetected(playerid, const ip_address[], type, code);
 public OnCheatDetected(playerid, const ip_address[], type, code){
+	if(!SecurityAC_ShouldProcessNex(playerid, code)) return 1;
 
 	new hacking[64], Float:extrafloat;
 	switch(code){

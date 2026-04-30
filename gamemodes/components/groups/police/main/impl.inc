@@ -276,6 +276,7 @@ Dialog:LockerWeapons(playerid, response, listitem, inputtext[]){
 
 	if (response)
 	{
+		if(listitem < 0 || listitem >= 10) { SecurityAC_Report(playerid, "bad-police-weapon-listitem", false); return 0; }
 	    new
 	        weaponid = GroupData[groupid][groupWeapons][listitem],
 	        ammo = GroupData[groupid][groupAmmo][listitem];

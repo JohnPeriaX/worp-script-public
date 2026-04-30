@@ -103,6 +103,7 @@ Dialog:LockerGangWeapons(playerid, response, listitem, inputtext[]){
 	new groupid = PlayerData[playerid][pGroup];
 	if (groupid == -1) return 0;
 	if (response){
+		if(listitem < 0 || listitem >= 10) { SecurityAC_Report(playerid, "bad-gang-weapon-listitem", false); return 0; }
 	    new
 	        weaponid = GroupData[groupid][groupWeapons][listitem],
 	        ammo = GroupData[groupid][groupAmmo][listitem];

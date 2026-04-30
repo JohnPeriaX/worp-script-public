@@ -597,7 +597,9 @@ Dialog:Contacts(playerid, response, listitem, inputtext[])
 	        Dialog_ShowEasy(playerid, NewContact, DIALOG_STYLE_INPUT, "เพิ่มผู้ติดต่อใหม่", "โปรดป้อนชื่อผู้ติดต่อด้านล่าง:", "ตกลง", "ยกเลิก");
 	    }
 	    else {
+			if(listitem < 1 || listitem > MAX_CONTACTS) { SecurityAC_Report(playerid, "bad-contact-listitem", false); return 0; }
 		    PlayerData[playerid][pContact] = ListedContacts[playerid][listitem - 1];
+			if(PlayerData[playerid][pContact] < 0) return 0;
 
 	        Dialog_ShowEasy(playerid, ContactInfo, DIALOG_STYLE_LIST, ContactData[playerid][PlayerData[playerid][pContact]][contactName], "โทรหาผู้ติดต่อนี้\nส่งข้อความ\nลบผู้ติดต่อ", "เลือก", "กลับ");
 	    }

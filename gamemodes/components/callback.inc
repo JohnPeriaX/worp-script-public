@@ -142,6 +142,7 @@ public OnPlayerClickMap(playerid, Float:fX, Float:fY, Float:fZ) {
 
 public OnPlayerConnect(playerid){
 	Security_ResetPlayerNet(playerid);
+	SecurityAC_Reset(playerid);
 	if(IsPlayerNPC(playerid)){
 		new string[128];
 		format(string, sizeof string, "NPC %s(%d) Connecting.....", ReturnName(playerid), playerid);
@@ -208,6 +209,7 @@ public OnPlayerFinishedDownloading(playerid, virtualworld){
 
 public OnPlayerDisconnect(playerid, reason){
 	Security_ResetPlayerNet(playerid);
+	SecurityAC_Reset(playerid);
 	if(IsPlayerNPC(playerid)){
 		if(!strcmp(ReturnName(playerid), "NPCBUSNO1", true)){
 			TRP_DestroyVehicle(BusRed);
@@ -317,6 +319,7 @@ public OnPlayerDisconnect(playerid, reason){
 }
 
 public OnPlayerSpawn(playerid){
+	SecurityAC_Grace(playerid, 5000);
 	if(IsPlayerNPC(playerid)){
 		if(!strcmp(ReturnName(playerid), "NPCBUSNO1", true)){
 			SetPlayerSkin(playerid, 253);
@@ -2141,20 +2144,29 @@ public OnPlayerRequestSpawn(playerid)
 
 public OnObjectMoved(objectid)
 {
+	if(objectid < 0) return 0;
 	return 1;
 }
 
 public OnPlayerObjectMoved(playerid, objectid)
 {
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(objectid < 0) return 0;
 	return 1;
 }
 
 public OnVehicleMod(playerid, vehicleid, componentid)
 {
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(componentid < 1000 || componentid > 1193) return 0;
 	return 1;
 }
 
 public OnVehiclePaintjob(playerid, vehicleid, paintjobid){
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(paintjobid < 0 || paintjobid > 3) return 0;
 	SetVehiclePaintjob(vehicleid, paintjobid);
 	return 1;
 }
@@ -3887,6 +3899,7 @@ public OnRconLoginAttempt(ip[], password[], success){
 
 public OnPlayerUpdate(playerid){
 	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	SecurityAC_CheckPlayer(playerid);
 	if(IsAFK{playerid} && LoggedIn[playerid]){
 		printf("%s Come in Server After AFK", ReturnRoleplayName(playerid));
 		new query[256];
@@ -3917,21 +3930,29 @@ public UpdateAccountWallet(playerid){
 
 public OnPlayerStreamIn(playerid, forplayerid)
 {
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(forplayerid < 0 || forplayerid >= MAX_PLAYERS || !IsPlayerConnected(forplayerid)) return 0;
 	return 1;
 }
 
 public OnPlayerStreamOut(playerid, forplayerid)
 {
+	if(playerid < 0 || playerid >= MAX_PLAYERS) return 0;
+	if(forplayerid < 0 || forplayerid >= MAX_PLAYERS || !IsPlayerConnected(forplayerid)) return 0;
 	return 1;
 }
 
 public OnVehicleStreamIn(vehicleid, forplayerid)
 {
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(forplayerid < 0 || forplayerid >= MAX_PLAYERS || !IsPlayerConnected(forplayerid)) return 0;
 	return 1;
 }
 
 public OnVehicleStreamOut(vehicleid, forplayerid)
 {
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(forplayerid < 0 || forplayerid >= MAX_PLAYERS || !IsPlayerConnected(forplayerid)) return 0;
 	return 1;
 }
 
@@ -6330,6 +6351,7 @@ public OnIncomingRPC(playerid, rpcid, BitStream:bs)
 public OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY, Float:fZ){
 	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid) || !LoggedIn[playerid]) return 0;
 	if(weaponid < 0 || weaponid > 55) return 0;
+	if(SecurityAC_CheckShot(playerid, weaponid)) return 0;
 	if(hittype == BULLET_HIT_TYPE_PLAYER && (hitid == INVALID_PLAYER_ID || !IsPlayerConnected(hitid))) return 0;
 
 	if(weaponid == PlayerData[playerid][pMyWeapon][0]){

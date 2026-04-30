@@ -2612,6 +2612,7 @@ stock GetSeconds(seconds){
 }
 
 stock SetPlayerPosEx(playerid, Float:X, Float:Y, Float:Z, Int, vWorld){
+	SecurityAC_Grace(playerid, 3000);
     TogglePlayerControllable(playerid, 0);
 	SetPlayerInterior(playerid, Int);
 	SetPlayerVirtualWorld(playerid, vWorld);
@@ -2892,6 +2893,209 @@ stock SecurityKick(playerid, const reason[])
 	format(string, sizeof(string), "[Security]: Kick %s(%d) IP:%s Reason:%s", ReturnName(playerid), playerid, ip, reason);
 	print(string);
 	KickPlayer(playerid);
+	return 1;
+}
+
+
+stock SecurityAC_Reset(playerid)
+{
+	if(playerid < 0 || playerid >= MAX_PLAYERS) return 0;
+	SecurityACLastCheckTick[playerid] = 0;
+	SecurityACLastAlertTick[playerid] = 0;
+	SecurityACWarnings[playerid] = 0;
+	SecurityACGraceUntil[playerid] = GetTickCount() + 5000;
+	SecurityACLastNexTick[playerid] = 0;
+	SecurityACLastNexCode[playerid] = -1;
+	SecurityACLastX[playerid] = 0.0;
+	SecurityACLastY[playerid] = 0.0;
+	SecurityACLastZ[playerid] = 0.0;
+	SecurityACLastInterior[playerid] = 0;
+	SecurityACLastWorld[playerid] = 0;
+	SecurityACPosReady[playerid] = false;
+	SecurityACShotWindowTick[playerid] = 0;
+	SecurityACShotCount[playerid] = 0;
+	return 1;
+}
+
+stock SecurityAC_Grace(playerid, ms = 3000)
+{
+	if(playerid < 0 || playerid >= MAX_PLAYERS) return 0;
+	SecurityACGraceUntil[playerid] = GetTickCount() + ms;
+	SecurityACPosReady[playerid] = false;
+	return 1;
+}
+
+stock SecurityAC_ShouldProcessNex(playerid, code)
+{
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	new tick = GetTickCount();
+	if(tick - SecurityACLastNexTick[playerid] < 1000 && tick >= SecurityACLastNexTick[playerid]) return 0;
+	if(SecurityACLastNexCode[playerid] == code && tick - SecurityACLastNexTick[playerid] < SECURITY_AC_NEX_COOLDOWN_MS && tick >= SecurityACLastNexTick[playerid]) return 0;
+	SecurityACLastNexTick[playerid] = tick;
+	SecurityACLastNexCode[playerid] = code;
+	return 1;
+}
+
+stock SecurityAC_Report(playerid, const reason[], bool:kick = false)
+{
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(IsPlayerNPC(playerid)) return 0;
+	if(PlayerData[playerid][pAdmin] >= 1337 || AdminDuty[playerid]) return 0;
+
+	new tick = GetTickCount();
+	if(tick - SecurityACLastAlertTick[playerid] > SECURITY_AC_ALERT_COOLDOWN_MS || tick < SecurityACLastAlertTick[playerid])
+	{
+		new string[160];
+		format(string, sizeof(string), "[SecurityAC]: %s(%d) IP:%s Reason:%s Warn:%d", ReturnName(playerid), playerid, PlayerData[playerid][pLastIP], reason, SecurityACWarnings[playerid] + 1);
+		print(string);
+		foreach(new i : Player)
+		{
+			if(!LoggedIn[i] || PlayerData[i][pAdmin] <= 0 || CheckToggleAlert[i] != 0) continue;
+			SendClientMessage(i, 0xFF2020AA, string);
+		}
+		SecurityACLastAlertTick[playerid] = tick;
+	}
+
+	SecurityACWarnings[playerid]++;
+	if(kick || SecurityACWarnings[playerid] >= SECURITY_AC_MAX_WARNINGS)
+	{
+		SecurityKick(playerid, reason);
+	}
+	return 1;
+}
+
+stock SecurityAC_IsForbiddenWeapon(weaponid)
+{
+	switch(weaponid)
+	{
+		case 35, 36, 37, 38, 39, 40, 44, 45: return 1;
+	}
+	return 0;
+}
+
+stock SecurityAC_UpdatePosition(playerid, Float:x, Float:y, Float:z)
+{
+	SecurityACLastX[playerid] = x;
+	SecurityACLastY[playerid] = y;
+	SecurityACLastZ[playerid] = z;
+	SecurityACLastInterior[playerid] = GetPlayerInterior(playerid);
+	SecurityACLastWorld[playerid] = GetPlayerVirtualWorld(playerid);
+	SecurityACPosReady[playerid] = true;
+	return 1;
+}
+
+stock SecurityAC_CheckShot(playerid, weaponid)
+{
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 1;
+	if(IsPlayerNPC(playerid) || PlayerData[playerid][pAdmin] >= 1337 || AdminDuty[playerid]) return 0;
+	if(weaponid <= 0) return 0;
+
+	new tick = GetTickCount();
+	if(tick - SecurityACShotWindowTick[playerid] > SECURITY_AC_SHOT_WINDOW_MS || tick < SecurityACShotWindowTick[playerid])
+	{
+		SecurityACShotWindowTick[playerid] = tick;
+		SecurityACShotCount[playerid] = 0;
+	}
+
+	SecurityACShotCount[playerid]++;
+	if(SecurityACShotCount[playerid] > SECURITY_AC_MAX_SHOTS_PER_WINDOW)
+	{
+		SecurityAC_Report(playerid, "rapid-fire", false);
+		return 1;
+	}
+	return 0;
+}
+
+stock SecurityAC_CheckPlayer(playerid)
+{
+	if(playerid < 0 || playerid >= MAX_PLAYERS || !IsPlayerConnected(playerid)) return 0;
+	if(IsPlayerNPC(playerid) || !LoggedIn[playerid]) return 1;
+	if(PlayerData[playerid][pAdmin] >= 1337 || AdminDuty[playerid]) return 1;
+
+	new tick = GetTickCount();
+	new elapsed = tick - SecurityACLastCheckTick[playerid];
+	if(elapsed >= 0 && elapsed < SECURITY_AC_CHECK_MS) return 1;
+	if(elapsed < 0) elapsed = SECURITY_AC_CHECK_MS;
+	SecurityACLastCheckTick[playerid] = tick;
+
+	new weaponid = GetPlayerWeapon(playerid);
+	new ammo = GetPlayerAmmo(playerid);
+	if(weaponid < 0 || weaponid > 46)
+	{
+		ResetPlayerWeapons(playerid);
+		SecurityAC_Report(playerid, "invalid-weapon", true);
+		return 0;
+	}
+	if(SecurityAC_IsForbiddenWeapon(weaponid))
+	{
+		ResetPlayerWeapons(playerid);
+		SecurityAC_Report(playerid, "forbidden-weapon", true);
+		return 0;
+	}
+	if(ammo > 20000)
+	{
+		ResetWeapon(playerid);
+		SecurityAC_Report(playerid, "ammo-spoof", false);
+	}
+
+	new Float:hp, Float:armour;
+	GetPlayerHealth(playerid, hp);
+	GetPlayerArmour(playerid, armour);
+	if(hp > 100.0)
+	{
+		SetPlayerHealthEx(playerid, 100.0);
+		SecurityAC_Report(playerid, "health-overflow", false);
+	}
+	if(armour > 100.0)
+	{
+		SetPlayerArmour(playerid, 100.0);
+		SecurityAC_Report(playerid, "armour-overflow", false);
+	}
+
+	if(IsPlayerInAnyVehicle(playerid))
+	{
+		new vehicleid = GetPlayerVehicleID(playerid);
+		if(vehicleid > 0 && vehicleid < MAX_VEHICLES)
+		{
+			new Float:vhealth;
+			GetVehicleHealth(vehicleid, vhealth);
+			if(vhealth > 1100.0)
+			{
+				SetVehicleHealth(vehicleid, 1000.0);
+				SecurityAC_Report(playerid, "vehicle-health-overflow", false);
+			}
+		}
+	}
+
+	new Float:x, Float:y, Float:z;
+	GetPlayerPos(playerid, x, y, z);
+	if(tick < SecurityACGraceUntil[playerid])
+	{
+		SecurityAC_UpdatePosition(playerid, x, y, z);
+		return 1;
+	}
+
+	new interior = GetPlayerInterior(playerid);
+	new world = GetPlayerVirtualWorld(playerid);
+	if(!SecurityACPosReady[playerid] || interior != SecurityACLastInterior[playerid] || world != SecurityACLastWorld[playerid])
+	{
+		SecurityAC_UpdatePosition(playerid, x, y, z);
+		return 1;
+	}
+
+	new Float:dx = x - SecurityACLastX[playerid];
+	new Float:dy = y - SecurityACLastY[playerid];
+	new Float:dz = z - SecurityACLastZ[playerid];
+	new Float:maxSpeed = 120.0;
+	if(IsPlayerInAnyVehicle(playerid)) maxSpeed = 360.0;
+	new Float:maxDist = (maxSpeed * float(elapsed) / 1000.0) + 60.0;
+
+	if((dx * dx + dy * dy + dz * dz) > (maxDist * maxDist))
+	{
+		SecurityAC_Report(playerid, "position-spoof", false);
+	}
+
+	SecurityAC_UpdatePosition(playerid, x, y, z);
 	return 1;
 }
 

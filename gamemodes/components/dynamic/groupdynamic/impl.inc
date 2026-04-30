@@ -1061,6 +1061,7 @@ Dialog:ChangeGroupSkin(playerid, response, listitem, inputtext[])
     }
 	if (response)
 	{
+		if(listitem < 0 || listitem >= 8) { SecurityAC_Report(playerid, "bad-group-skin-listitem", false); return 0; }
 		new groupid = PlayerData[playerid][pGroup];
 	    if (!GroupData[groupid][groupExists])
 			return 0;

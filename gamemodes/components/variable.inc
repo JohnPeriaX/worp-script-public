@@ -318,3 +318,27 @@ new Zone1, Zone2, LabelZone;
 
 new timeshift = 0;
 new shifthour;
+
+#define SECURITY_AC_CHECK_MS (1000)
+#define SECURITY_AC_ALERT_COOLDOWN_MS (10000)
+#define SECURITY_AC_NEX_COOLDOWN_MS (5000)
+#define SECURITY_AC_MAX_WARNINGS (4)
+
+new SecurityACLastCheckTick[MAX_PLAYERS];
+new SecurityACLastAlertTick[MAX_PLAYERS];
+new SecurityACWarnings[MAX_PLAYERS];
+new SecurityACGraceUntil[MAX_PLAYERS];
+new SecurityACLastNexTick[MAX_PLAYERS];
+new SecurityACLastNexCode[MAX_PLAYERS];
+new Float:SecurityACLastX[MAX_PLAYERS];
+new Float:SecurityACLastY[MAX_PLAYERS];
+new Float:SecurityACLastZ[MAX_PLAYERS];
+new SecurityACLastInterior[MAX_PLAYERS];
+new SecurityACLastWorld[MAX_PLAYERS];
+new bool:SecurityACPosReady[MAX_PLAYERS];
+
+#define SECURITY_AC_SHOT_WINDOW_MS (1000)
+#define SECURITY_AC_MAX_SHOTS_PER_WINDOW (28)
+
+new SecurityACShotWindowTick[MAX_PLAYERS];
+new SecurityACShotCount[MAX_PLAYERS];
