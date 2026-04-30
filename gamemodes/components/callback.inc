@@ -32,12 +32,12 @@ public OnGameModeInit(){
 	LoadingServer();
 	LoadMapServer();
 	LoadServerTextDraw();
-	
+
 	TextDrawSetString(LogoServer[0], "GTA-WORP.COM");
 	new stringversion[24];
 	format(stringversion, sizeof(stringversion), "%s", SERVER_VERSION);
 	TextDrawSetString(LogoServer[2], stringversion);
-	
+
 	LoadActorServer();
 	LoadCheckPointServer();
 	LoadActorBlackMarket();
@@ -92,7 +92,7 @@ public OnPlayerRequestClass(playerid, classid){
 		else{
 			StopAudioStreamForPlayer(playerid);
 			PlayAudioStreamForPlayer(playerid, "http://154.202.2.5/musics/Sweet.mp3"); //เพลงเข้าเซิฟ
-			
+
 			for(new i=0; i<50; i++) SendClientMessage(playerid, -1, " ");
 			SendClientMessage(playerid, COLOR_SERVER, "==============================================");
 			SendClientMessage(playerid, COLOR_SERVER, "| {FFFFFF}กำลังโหลดเข้าเซิฟเวอร์ กรุณารอสักครู่...");
@@ -127,7 +127,7 @@ public SetCamera(playerid){
 public OnPlayerClickMap(playerid, Float:fX, Float:fY, Float:fZ) {
 	if(!LoggedIn[playerid]) return 1;
 	if(PlayerData[playerid][pAdmin] >= 1338) SetPlayerPos(playerid, fX, fY, fZ);
-	
+
 	gGPSRPlayerMarkerPos[playerid][0] = fX;
 	gGPSRPlayerMarkerPos[playerid][1] = fY;
 	gGPSRPlayerMarkerPos[playerid][2] = fZ;
@@ -164,7 +164,7 @@ public OnPlayerConnect(playerid){
 	RemovePrison(playerid);
 
 	GetPlayerIp(playerid, PlayerData[playerid][pLastIP], 16);
-	
+
 	new str[128];
 	format(str, sizeof(str), "SELECT * FROM `blacklist` WHERE `Username` = '%s' OR `IP` = '%s'", ReturnName(playerid), PlayerData[playerid][pLastIP]);
 	mysql_tquery(dbCon, str, "OnPlayerBlacklist", "d", playerid);
@@ -183,9 +183,10 @@ public OnIncomingConnection(playerid, ip_address[], port){
 		format(string, sizeof string, "[Connecting]: (%d) กำลัง Connect เข้าสู่เซิฟเวอร์ (IP/Port: %s:%i)", playerid, ip_address, port);
 		SendAdminsMessage(1, COLOR_GREY, string);
 	}
-	return 1;	
+	return 1;
 }
 
+forward OnPlayerFinishedDownloading(playerid, virtualworld);
 public OnPlayerFinishedDownloading(playerid, virtualworld){
 	new string[128];
     format(string, sizeof string, "[Downloading]: %s ได้ทำการเปลี่ยนโลกเสมือนจริงเป็น %i สำเร็จ", ReturnName(playerid), virtualworld);
@@ -237,7 +238,7 @@ public OnPlayerDisconnect(playerid, reason){
 			if(!LoggedIn[i]) continue;
 			if(!PlayerEnterWarFlag[i]) continue;
 			SendClientMessageEx(i, 0xFF8300FF, "[วอชิงธง]: ผู้เล่น %s ได้ทำการออกจากเกมจึงทำให้ธงตกอีกครั้ง...", ReturnRoleplayName(playerid));
-		} 
+		}
 
 		new Float:x, Float:y, Float:z;
 		GetPlayerPos(playerid, x, y, z);
@@ -330,7 +331,7 @@ public OnPlayerSpawn(playerid){
 	}
 
 	if(LoggedIn[playerid]){
-		
+
 		if(PlayerData[playerid][pWhitelist] == 0){
 			Dialog_ShowEasy(playerid, ShowOnly, DIALOG_STYLE_MSGBOX, "ไม่มี Whitelist", "คุณไม่มี Whitelist คุณสามารถซื้อไวริสได้ที่ Discord: discord.gg/QfBhz9uXn9", "ตกลง", "");
 			return SetTimerEx("FixKick", 1000, false, "d", playerid);
@@ -356,7 +357,7 @@ public OnPlayerSpawn(playerid){
 				SetPlayerPosEx(playerid, -2651.1536,639.2015,14.4531, 0, 0);
 				SetPlayerFacingAngle(playerid, 177.5880);
 			}
-			
+
 			TogglePlayerSpectating(playerid, 1);
 			HospitalHealth[playerid] = 0;
 			SetTimerEx("SetCameraToHospital", 500, false, "d", playerid);
@@ -405,7 +406,7 @@ public OnPlayerSpawn(playerid){
 				TogglePlayerControllable(playerid, 0);
 			}
 		}
-		
+
 		SetPlayerSkin(playerid, PlayerData[playerid][pSkin]);
 		SetPlayerColor(playerid, 0xFFFFFF00);
 		if(GetGroupType(playerid) == GROUP_MECHANIC) SetGroupColor(playerid);
@@ -662,19 +663,19 @@ public OnPlayerDeath(playerid, killerid, reason){
 			PlayerGetFlag[playerid] = false;
 			RemoveAttachedObject(playerid, 8);
 		}
-		
+
 		PlayerData[playerid][pInHospital] = false;
 		PlayerData[playerid][pInjured] = false;
 		PlayerDelayFlagWar[playerid] = 60;
 	}
-	
+
 	if(PlayerHaveStoryID[playerid] != -1 && PlayerData[playerid][pGroup] != -1 && !PlayerData[playerid][pInjured]){
 		new story_id = PlayerHaveStoryID[playerid];
 		if(Story_Gang[story_id][story_State] == Story_Confirm){
 			if(Story_Gang[story_id][story_Mygang] == PlayerData[playerid][pGroup]){
 				GroupData[Story_Gang[story_id][story_Enemy]][groupKill]++;
 				SendFactionMessage(Story_Gang[story_id][story_Enemy], 0x00AAFFAA, "(( แก๊งของคุณได้รับคะแนนศพสำหรับสตอรี่ +1 [%d/%d] ))", GroupData[Story_Gang[story_id][story_Enemy]][groupKill], Story_Gang[story_id][story_Hidebody]);
-			
+
 				if(GroupData[Story_Gang[story_id][story_Enemy]][groupKill] >= Story_Gang[story_id][story_Hidebody]){
 					SendFactionMessage(Story_Gang[story_id][story_Mygang], 0x00AAFFAA, "(( แก๊ง '%s' ได้ทำคะแนนศพจนครบ %d แล้ว การเล่นสตอรี่นี้จึงจบลง ))", Story_Gang[story_id][story_EnemyName], Story_Gang[story_id][story_Hidebody]);
 					SendFactionMessage(Story_Gang[story_id][story_Enemy], 0x00AAFFAA, "(( แก๊งคุณได้ทำคะแนนศพจนครบ %d แล้ว การเล่นสตอรี่นี้จึงจบลง ))", Story_Gang[story_id][story_Hidebody]);
@@ -685,7 +686,7 @@ public OnPlayerDeath(playerid, killerid, reason){
 			else if(Story_Gang[story_id][story_Mygang] == PlayerData[killerid][pGroup]){
 				GroupData[Story_Gang[story_id][story_Mygang]][groupKill]++;
 				SendFactionMessage(Story_Gang[story_id][story_Mygang], 0x00AAFFAA, "(( แก๊งของคุณได้รับคะแนนศพสำหรับสตอรี่ +1 [%d/%d] ))", GroupData[Story_Gang[story_id][story_Mygang]][groupKill], Story_Gang[story_id][story_Hidebody]);
-			
+
 				if(GroupData[Story_Gang[story_id][story_Mygang]][groupKill] >= Story_Gang[story_id][story_Hidebody]){
 					SendFactionMessage(Story_Gang[story_id][story_Enemy], 0x00AAFFAA, "(( แก๊ง '%s' ได้ทำคะแนนศพจนครบ %d แล้ว การเล่นสตอรี่นี้จึงจบลง ))", Story_Gang[story_id][story_MygangName], Story_Gang[story_id][story_Hidebody]);
 					SendFactionMessage(Story_Gang[story_id][story_Mygang], 0x00AAFFAA, "(( แก๊งคุณได้ทำคะแนนศพจนครบ %d แล้ว การเล่นสตอรี่นี้จึงจบลง ))", Story_Gang[story_id][story_Hidebody]);
@@ -727,8 +728,8 @@ public OnVehicleDeath(vehicleid, killerid){
 					Log_Write("logs/destroycar.txt", "[%s] %s of [%s] Destroy By %s", ReturnDate(), ReturnVehicleName(CarData[id][carVehicle]), ReturnRoleplayName(ownerid), ReturnRoleplayName(killerid));
 					foreach(new i : Player) if(LoggedIn[i]){
 						if(PlayerData[i][pAdmin] > 1) SendClientMessageEx(i, COLOR_RED, "[แจ้งเตือน]: ยานพาหนะ %s ของ %s ถูกทำลายโดย %s", ReturnVehicleName(CarData[id][carVehicle]), ReturnRoleplayName(ownerid), ReturnRoleplayName(killerid));
-					}	
-					
+					}
+
 					CarData[id][carDestroyed] = 1;
 					CarData[id][carHealth] = 100;
 					SetVehicleHealth(CarData[id][carVehicle], 100);
@@ -802,16 +803,16 @@ public OnPlayerDeathFinished(playerid){
 			PlayerData[playerid][pInjuredWorld] = GetPlayerVirtualWorld(playerid);
 			PlayerData[playerid][pInjuredInt] = GetPlayerInterior(playerid);
 			PlayerData[playerid][pInjuredTime] = 600;
-			
+
 			SetSpawnInfo(playerid, NO_TEAM, PlayerData[playerid][pSkin], PlayerData[playerid][pInjuredPos][0], PlayerData[playerid][pInjuredPos][1], PlayerData[playerid][pInjuredPos][2], PlayerData[playerid][pInjuredPos][3], 0, 0, 0, 0, 0, 0);
-			
+
 
 			new Float:ls = GetPlayerDistanceFromPoint(playerid, 1172.5717,-1323.9811,15.4036);
 			new Float:sf = GetPlayerDistanceFromPoint(playerid, -2651.1536,639.2015,14.4531);
 
 			if(ls < sf) PlayerData[playerid][pHospitalType] = 1;
 			else PlayerData[playerid][pHospitalType] = 2;
-		}	
+		}
 		else if(PlayerData[playerid][pInjured] == 1 && !PlayerEnterWarFlag[playerid] && PlayerEnterWarCity[playerid] == 0){
 			PlayerData[playerid][pInjured] = 0;
 			if(PlayerData[playerid][pJail] != 0) PlayerData[playerid][pInHospital] = 0;
@@ -868,7 +869,7 @@ public OnPlayerDamage(&playerid, &Float:amount, &issuerid, &weapon, &bodypart){
 					// 	else if(levelweapon == 4) amount += 5.0;
 					// 	else if(levelweapon == 5) amount += 6.0;
 					// }
-				}	
+				}
 			}
 
 			if(weapon == WEAPON_VEHICLE){
@@ -890,8 +891,8 @@ public OnPlayerDamage(&playerid, &Float:amount, &issuerid, &weapon, &bodypart){
 			}
 
 			if(amount > 0){
-				if(armour > 0.0) AddPlayerDamage(playerid, weapon, amount, 1, bodypart);			
-				else AddPlayerDamage(playerid, weapon, amount, 0, bodypart);		
+				if(armour > 0.0) AddPlayerDamage(playerid, weapon, amount, 1, bodypart);
+				else AddPlayerDamage(playerid, weapon, amount, 0, bodypart);
 			}
 		}
 	}
@@ -1000,14 +1001,14 @@ public OnPlayerText(playerid, text[]){
 	if(PlayerData[playerid][pFirstTime]) return 0;
 
 	if(IsPlayerConnected(playerid)){
-		if(PlayerData[playerid][pInjured] == 1){ 
+		if(PlayerData[playerid][pInjured] == 1){
 			ErrorMsg(playerid, "คุณบาดเจ็บอยู่ไม่สามารถพิมพ์ได้");
 			return 0;
 		}
 
 		new targetid = PlayerData[playerid][pCallLine], str[128];
 
-		if(IsPlayerOnPhone(playerid)) { 
+		if(IsPlayerOnPhone(playerid)) {
 			if (strlen(text) > 64){
 				SendNearbyMessage(playerid, 8.0, COLOR_WHITE, "[โทรศัพท์] %s(%d) พูดว่า: %s", ReturnRoleplayName(playerid), playerid, text);
 				SendNearbyMessage(playerid, 8.0, COLOR_WHITE, "...%s!", text[64]);
@@ -1177,7 +1178,7 @@ public OnPlayerEnterVehicle(playerid, vehicleid, ispassenger){
 		ClearAnimations(playerid);
 		return 1;
 	}
-	
+
 	if(StartPickupDrug[playerid] || StartProcessDrug[playerid]){
 		ClearAnimations(playerid);
 		return 1;
@@ -1279,7 +1280,7 @@ public OnPlayerStateChange(playerid, newstate, oldstate){
 				PlayerData[playerid][pInjuredWorld] = GetPlayerVirtualWorld(playerid);
 				PlayerData[playerid][pInjuredTime] = 300;
 				SetSpawnInfo(playerid, NO_TEAM, PlayerData[playerid][pSkin], PlayerData[playerid][pInjuredPos][0], PlayerData[playerid][pInjuredPos][1], PlayerData[playerid][pInjuredPos][2], PlayerData[playerid][pInjuredPos][3], 0, 0, 0, 0, 0, 0);
-			}	
+			}
 			else if(PlayerData[playerid][pInjured] == 1){
 				PlayerData[playerid][pInjured] = 0;
 				PlayerData[playerid][pInHospital] = 1;
@@ -1345,7 +1346,7 @@ public OnPlayerStateChange(playerid, newstate, oldstate){
 
 			PlayerPlaySound(playerid, 1130, 0.0, 0.0, 0.0);
 		}
-	}	
+	}
 
 	if(newstate == PLAYER_STATE_DRIVER){
 		if(PlayerData[playerid][pInjured]){
@@ -1646,7 +1647,7 @@ public OnPlayerEnterCheckpoint(playerid){
                     GetSumEngRandom[playerid] = -1;
                 }
             }
-        }   
+        }
     }
 
 	if(StartDeliverBox[playerid] && GotoSendBox[playerid]){
@@ -1755,7 +1756,7 @@ public OnPlayerEnterCheckpoint(playerid){
                     GardenerTime[playerid] = SetTimerEx("UpdateGardener", 100, false, "i", playerid);
                 }
             }
-        }   
+        }
     }
 
 	if(CheckEnterPointGarbageJob[playerid] == 1 && GetPlayerState(playerid) == PLAYER_STATE_ONFOOT){
@@ -1834,7 +1835,7 @@ public OnPlayerEnterCheckpoint(playerid){
 		DisablePlayerCheckpoint(playerid);
 		ClearGPS(playerid);
 	}
-	
+
 	if(PlayerData[playerid][pJob] == FISHJOB){
 		new vehicleid = GetPlayerVehicleID(playerid);
 		new id = Car_GetID(vehicleid);
@@ -1885,7 +1886,7 @@ public OnModelSelectionResponse(playerid, extraid, index, modelid, response){
 				EntranceData[doorid][entranceProducts]-= 5;
 			}
 		}
-		
+
 		if(PlayerData[playerid][pFirstTime] == 0){
 			if(GetMoney(playerid) < 3000) return ErrorMsg(playerid, "คุณมีเงินไม่พอ");
 
@@ -2253,7 +2254,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 						SetPlayerAttachedObject(playerid, 2, PlayerData[playerid][pAccessoryModelBody], 1, AccessoryData[playerid][2][0], AccessoryData[playerid][2][1], AccessoryData[playerid][2][2], AccessoryData[playerid][2][3], AccessoryData[playerid][2][4], AccessoryData[playerid][2][5], AccessoryData[playerid][2][6], AccessoryData[playerid][2][7], AccessoryData[playerid][2][8]);
 					}
 				}
-				
+
 			}
 
 			if(PlayerEnterCamera[playerid] == 1){
@@ -2403,7 +2404,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 							if (GetBoxCloth[playerid]){
 								if (CoreVehicles[CarData[carid][carVehicle]][vehCloth] >= 5)
 									return SendClientMessage(playerid, COLOR_WHITE, "ยานพาหนะคันนี้บรรจุกล่องเสื้อผ้าได้แค่ 5 กล่อง");
-							
+
 								CoreVehicles[CarData[carid][carVehicle]][vehCloth]++;
 
 								ApplyAnimation(playerid, "CARRY", "putdwn", 4.0, 0, 0, 0, 0, 0);
@@ -2456,7 +2457,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 									getprice = JobData[i][jobDeliverPrice];
 								}
 							}
-							
+
 							GiveMoney(playerid, getprice, "clothing send");
 							SendClientMessageEx(playerid, COLOR_ORANGE, "- คุณได้รับเงินจำนวน %s จากการส่งสินค้า", FormatNumber(getprice));
 
@@ -2493,7 +2494,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 							if (CoreVehicles[CarData[carid][carVehicle]][vehGas] >= 1)
 								return SendClientMessage(playerid, COLOR_WHITE, "ยานพาหนะคันนี้สามารถบรรจุได้เพียง 1 ชิ้นเท่านั้น");
 						}
-					
+
 						if(IsGasOnVeh[CarData[carid][carVehicle]] == 0){
 							if(CarryGas[playerid] == 1)
 							{
@@ -2659,7 +2660,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 						Dialog_ShowEasy(playerid, CampingUseingOwner, DIALOG_STYLE_LIST, header, string, "เลือก", "ปิด");
 					}
 				}
-    		}   
+    		}
 
 			if((id = Mine_Near(playerid)) != -1){
                 if(IsPlayerInAnyVehicle(playerid)) return ErrorMsg(playerid, "คุณจะต้องลงจากยานพาหนะก่อน");
@@ -2731,15 +2732,15 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 
 						if(countpolice >= 7) break;
 					}
-					
+
 					if(DrugData[id][drugType] == 1){
 						if(countpolice >= 7){
 							if(DrugData[id][drugAmount] < 7)
 								return ErrorMsg(playerid, "มีกัญชาไม่พอให้คุณเก็บ");
-								
+
 							if(StartPickupDrug[playerid] == 0 && PlayerGetDrug[playerid] == 0 && StartProcessDrug[playerid] == 0){
 								if(!IsPlayerInAnyVehicle(playerid)){
-									
+
 									if(PlayerData[playerid][pLevel] < 2)
 										return ErrorMsg(playerid, "คุณต้องมีเลเวล 2 ขึ้นไป");
 
@@ -2754,7 +2755,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 						if(countpolice >= 7){
 							if(DrugData[id][drugAmount] < 7)
 								return ErrorMsg(playerid, "มีโคเคนไม่พอให้คุณเก็บ");
-								
+
 							if(StartPickupDrug[playerid] == 0 && PlayerGetDrug[playerid] == 0 && StartProcessDrug[playerid] == 0){
 								if(!IsPlayerInAnyVehicle(playerid)){
 									if(PlayerData[playerid][pLevel] < 3)
@@ -2776,17 +2777,17 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 						else{
 							DrugCraft_Hide(playerid);
 							TogglePlayerControllable(playerid, 1);
-						}   
+						}
 					}
 
 					if(DrugData[id][drugType] == 4){
 						if(countpolice >= 7){
 							if(DrugData[id][drugAmount] < 7)
 								return ErrorMsg(playerid, "มีปูนไม่พอให้จก");
-								
+
 							if(StartPickupDrug[playerid] == 0 && PlayerGetDrug[playerid] == 0 && StartProcessDrug[playerid] == 0){
 								if(!IsPlayerInAnyVehicle(playerid)){
-									
+
 									if(PlayerData[playerid][pLevel] < 4)
 										return ErrorMsg(playerid, "คุณต้องมีเลเวล 4 ขึ้นไป");
 
@@ -2800,7 +2801,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 					if(DrugData[id][drugType] == 5){
 						if(DrugData[id][drugAmount] < 2)
 							return ErrorMsg(playerid, "สายไฟไม่เพียงพอ");
-							
+
 						if(StartPickupDrug[playerid] == 0 && PlayerGetDrug[playerid] == 0 && StartProcessDrug[playerid] == 0){
 							if(!IsPlayerInAnyVehicle(playerid)){
 								if(PlayerData[playerid][pLevel] < 7) return ErrorMsg(playerid, "คุณต้องมีเลเวล 7 ขึ้นไป");
@@ -2824,12 +2825,12 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 
 						if(countpolice >= 7) break;
 					}
-					
+
 					if(DrugData[id][drugType] == 1){
 						if(countpolice < 10) return ErrorMsg(playerid, "ต้องการตำรวจอย่างน้อย 10 คน");
 						if(PlayerGetDrug[playerid] == 1 && StartProcessDrug[playerid] == 0 && StartPickupDrug[playerid] == 0){
 							if(!IsPlayerInAnyVehicle(playerid)){
-								
+
 								if(PlayerGetDrug[playerid] != 1) return ErrorMsg(playerid, "ชนิดของยาไม่ถูกต้อง");
 
 								if(PlayerData[playerid][pLevel] < 2)
@@ -2891,8 +2892,8 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 						}
 						else if(StartFishingShark[playerid] && SharkOnRod[playerid]){
 							GetRodOnHand(playerid);
-						} 
-					}      
+						}
+					}
 				}
 			}
 
@@ -2920,7 +2921,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 						if(JobData[id][jobType] == PIZZAJOB){
 							OpenPizzaMenu(playerid);
 						}
-					}   
+					}
 				}
 			}
 
@@ -2935,7 +2936,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 
 						if(JellyFishData[id][jellyfishPicking] == 1)
 							return ErrorMsg(playerid, "ไม่สามารถเก็บได้");
-							
+
 						TogglePlayerControllable(playerid, 0);
 						StartPickupJellyFish(playerid, id);
 						JellyFishData[id][jellyfishPicking] = 1;
@@ -2950,7 +2951,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 					}
 				}
 			}
-			
+
 			if(PlayerData[playerid][pJob] == CLOTHJOB){
 				if(GetPlayerState(playerid) == PLAYER_STATE_DRIVER){
 					new vehicleid = GetPlayerVehicleID(playerid);
@@ -3047,7 +3048,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
                     Dialog_ShowEasy(playerid, ExitNoOwnerHome, DIALOG_STYLE_LIST, caption, "ออกบ้าน", "เลือก", "ยกเลิก");
                 }
             }
-            
+
             if((id = Home_Inside(playerid)) != -1 && Home_NearestInside(playerid) == -1){
                 if(Home_IsOwner(playerid, id) || Home_IsRentOwner(playerid, id) || CanFriskHome[playerid] == HomeData[id][homeOwner]){
 					if(!PlayerEditPositionInventory[playerid] && !PlayerEditColorInventory[playerid]){
@@ -3220,11 +3221,11 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 			//checkmarket
 			if(PlayerToPoint(2.0, playerid, 1134.0571,-1471.0575,15.7799) || PlayerToPoint(2.0, playerid, -2273.9236,527.0815,35.0156)){
 				callcmd::market(playerid, "\1");
-			}	
+			}
 			//checkblackmarket
 			if(PlayerToPoint(2.0, playerid, -774.6674,1627.3953,27.1172)){
 				callcmd::blackmarket(playerid, "\1");
-			}	
+			}
 			//checkcrm
 			if(PlayerToPoint(2.0, playerid, 1124.2960,-1470.8641,15.7682) || PlayerToPoint(2.0, playerid, -2274.0762,541.2120,35.0156)){
 				CheckCrm(playerid);
@@ -3396,7 +3397,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 						if(CowData[id][cowDeath] == 1 && CowData[id][cowPicking] == 0){
 							CowData[id][cowPicking] = 1;
 							CowGetID[playerid] = id;
-							
+
 							if(CowGetID[playerid] != -1){
 								//ProgressbarJob[playerid] = CreatePlayerProgressBar(playerid, 0.000000, 428.000000, 644.500000, 20.500000, 0xC9FF00AA, 100.000000, 0);
 								CreatePlayerProgressbar_Job(playerid, 0xC9FF00AA);
@@ -3425,7 +3426,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 				if(SideJobData[id][sidejobType] == 1){
 					ShowDialogCutWood(playerid);
 				}
-				
+
 				if(SideJobData[id][sidejobType] == 2){
 					//แปรรูปแร่
 					if(!PlayerStartProcessMine[playerid])
@@ -3553,7 +3554,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 
 				if(JobData[id][jobType] == RUBBERJOB && PlayerData[playerid][pJob] == RUBBERJOB){
 					SetPlayerToolRubber(playerid);
-				} 
+				}
 
 				if(JobData[id][jobType] == SEEKERJOB && PlayerData[playerid][pJob] == SEEKERJOB){
 					OnPlayerStartJobSeeker(playerid);
@@ -3639,7 +3640,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 				if(JobData[id][jobType] == WEAPONDEALERJOB && PlayerData[playerid][pJob] == WEAPONDEALERJOB){
 					if(StartingCraftWeapon[playerid] == 1)
 						return ErrorMsg(playerid, "คุณกำลังคราฟอาวุธอยู่...");
-						
+
 					ShowPlayerCraftWeaponMenu(playerid);
 				}
 
@@ -3668,7 +3669,7 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys){
 					GiveMoney(playerid, JobData[id][jobDeliverPrice], "send gas");
 					SendClientMessageEx(playerid, COLOR_YELLOW, "- คุณได้รับเงินจำนวน %s จากการส่งแก๊สครั้งนี้", FormatNumber(JobData[id][jobDeliverPrice]));
 				}
-				
+
 				if(JobData[id][jobType] == FARMERJOB){
 					GetJobID[playerid] = id;
 					ShowDialogSellRice(playerid);
@@ -3944,7 +3945,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 			format(dialog, sizeof(dialog), " สร้างตัวละครใหม่");
 			format(str, sizeof(str), "ตัวละครของ: %s", ReturnName(playerid));
 			Dialog_ShowEasy(playerid, Character_Select, DIALOG_STYLE_LIST, str, dialog, "ตกลง","ยกเลิก");
-			
+
 			PlayerData[playerid][pSelectChar] = 1;
 
 			for(new i=0; i<15; i++){
@@ -3963,7 +3964,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 			format(dialog, sizeof(dialog), " สร้างตัวละครใหม่");
 			format(str, sizeof(str), "ตัวละครของ: %s", ReturnName(playerid));
 			Dialog_ShowEasy(playerid, Character_Select, DIALOG_STYLE_LIST, str, dialog, "ตกลง","ยกเลิก");
-			
+
 			PlayerData[playerid][pSelectChar] = 2;
 
 			for(new i=0; i<15; i++){
@@ -3979,11 +3980,11 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 			if(LoggedIn[playerid]) return 1;
 
 			new str[64], dialog[512];
-		
+
 			format(dialog, sizeof(dialog), " สร้างตัวละครใหม่");
 			format(str, sizeof(str), "ตัวละครของ: %s", ReturnName(playerid));
 			Dialog_ShowEasy(playerid, Character_Select, DIALOG_STYLE_LIST, str, dialog, "ตกลง","ยกเลิก");
-			
+
 			PlayerData[playerid][pSelectChar] = 3;
 
 			for(new i=0; i<15; i++){
@@ -4094,7 +4095,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 						GameTextForPlayer(playerid, "~W~Edit Color ~G~GREEN", 3000, 6);
 					}
 					else if(PlayerInventoryColorType[playerid] == 1) {
-						PlayerInventoryColorType[playerid] = 2; 
+						PlayerInventoryColorType[playerid] = 2;
 						GameTextForPlayer(playerid, "~W~Edit Color ~B~BLUE", 3000, 6);
 					}
 					else if(PlayerInventoryColorType[playerid] == 2) {
@@ -4109,7 +4110,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 						GameTextForPlayer(playerid, "~W~Edit Color ~B~BLUE", 3000, 6);
 					}
 					else if(PlayerInventoryColorType[playerid] == 1) {
-						PlayerInventoryColorType[playerid] = 0; 
+						PlayerInventoryColorType[playerid] = 0;
 						GameTextForPlayer(playerid, "~W~Edit Color ~R~RED", 3000, 6);
 					}
 					else if(PlayerInventoryColorType[playerid] == 2) {
@@ -4129,7 +4130,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 						Update_EditPositionInventory(playerid);
 					}
 				}
-				
+
 				if(playertextid == ArrowEditInv[playerid][1]){ //ลง
 					if(PlayerPositionInventoryY[playerid] < 200){
 						//printf("DOWN");
@@ -4144,7 +4145,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 						PlayerPositionInventoryX[playerid] -= 5.0;
 						Update_EditPositionInventory(playerid);
 					}
-					
+
 				}
 
 				if(playertextid == ArrowEditInv[playerid][3]){ //ขวา
@@ -4258,7 +4259,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 						PlayerPlaySound(playerid,1135,0.0,0.0,0.0);
 					}
 				}
-				
+
 				PlayerPlaySound(playerid,1135,0.0,0.0,0.0);
 			}
 
@@ -4483,10 +4484,10 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 						if (playertextid == PlayerSlotInventoryTextDraw[playerid][PlayerSlotInventoryModel[playerid][i][j]]){
 							PlayerInvListItemRows[playerid] = i;
 							PlayerInvListItemColumn[playerid] = j;
-							
+
 							if(PlayerGetIndexSlotItem[playerid] == -1){ // เมื่อคลิกไอเท็มครั้งแรก
 								if(Inventory_Player[playerid][index][itemKey] != MODEL_NULL) {
-									PlayerGetIndexSlotItem[playerid] = index; 
+									PlayerGetIndexSlotItem[playerid] = index;
 									PlayerInvListItemRowsOld[playerid] = i;
 									PlayerInvListItemColumnOld[playerid] = j;
 
@@ -4497,7 +4498,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 							}
 							else if(PlayerGetIndexSlotItem[playerid] == index){
 								if(Inventory_Player[playerid][index][itemKey] != MODEL_NULL) {
-									PlayerGetIndexSlotItem[playerid] = index; 
+									PlayerGetIndexSlotItem[playerid] = index;
 									PlayerInvListItemRowsOld[playerid] = i;
 									PlayerInvListItemColumnOld[playerid] = j;
 
@@ -4512,7 +4513,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 
 								if(PlayerShowButton[playerid]) RemoveUseInfoButton(playerid);
 								PlayerGetIndexNextSlotItem[playerid] = index;
-								
+
 								new string[128];
 
 								//swap
@@ -4527,7 +4528,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 										Inventory_Player[playerid][PlayerGetIndexNextSlotItem[playerid]][itemAmmo] = Inventory_Player[playerid][PlayerGetIndexSlotItem[playerid]][itemAmmo];
 										Inventory_Player[playerid][PlayerGetIndexNextSlotItem[playerid]][itemLevel] = Inventory_Player[playerid][PlayerGetIndexSlotItem[playerid]][itemLevel];
 										Inventory_Player[playerid][PlayerGetIndexNextSlotItem[playerid]][itemSlot] = PlayerGetIndexNextSlotItem[playerid];
-										
+
 										printf("Inv: Update Item %s To Slot %d", Inventory_Player[playerid][PlayerGetIndexNextSlotItem[playerid]][itemName], Inventory_Player[playerid][PlayerGetIndexNextSlotItem[playerid]][itemSlot]);
 										mysql_format(dbCon, string, sizeof(string), "UPDATE `inventory` SET `itemSlot` = %d WHERE `itemOwner` = '%d' AND `itemID` = '%d' LIMIT 1", Inventory_Player[playerid][PlayerGetIndexNextSlotItem[playerid]][itemSlot], PlayerData[playerid][pID], Inventory_Player[playerid][PlayerGetIndexNextSlotItem[playerid]][itemID]);
 										mysql_tquery(dbCon, string);
@@ -4566,8 +4567,8 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 												//Inventory_Player[playerid][PlayerGetIndexNextSlotItem[playerid]][itemKey] = Inventory_Player[playerid][PlayerGetIndexSlotItem[playerid]][itemKey];
 												Inventory_Player[playerid][PlayerGetIndexNextSlotItem[playerid]][itemQuantity] += Inventory_Player[playerid][PlayerGetIndexSlotItem[playerid]][itemQuantity];
 												Inventory_Player[playerid][PlayerGetIndexNextSlotItem[playerid]][itemSlot] = PlayerGetIndexNextSlotItem[playerid];
-												
-												
+
+
 												printf("Inv: Update Item %s To Slot %d", Inventory_Player[playerid][PlayerGetIndexNextSlotItem[playerid]][itemName], Inventory_Player[playerid][PlayerGetIndexNextSlotItem[playerid]][itemSlot]);
 												mysql_format(dbCon, string, sizeof(string), "UPDATE `inventory` SET `itemQuantity` = %d WHERE `itemOwner` = '%d' AND `itemID` = '%d' LIMIT 1", Inventory_Player[playerid][PlayerGetIndexNextSlotItem[playerid]][itemQuantity], PlayerData[playerid][pID], Inventory_Player[playerid][PlayerGetIndexNextSlotItem[playerid]][itemID]);
 												mysql_tquery(dbCon, string);
@@ -4593,7 +4594,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 										}
 									}
 									else Dialog_ShowEasy(playerid, ShowOnly, DIALOG_STYLE_MSGBOX, "เกิดข้อผิดพลาด", "[!] อาวุธไม่สามารถรวมกันได้", "ตกลง", "");
-									
+
 
 									PlayerGetIndexSlotItem[playerid] = -1;
 									PlayerGetIndexNextSlotItem[playerid] = -1;
@@ -4601,7 +4602,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 									PlayerInvListItemColumnOld[playerid] = -1;
 
 									if(Inventory_Player[playerid][index][itemKey] != MODEL_NULL) {
-										PlayerGetIndexSlotItem[playerid] = index; 
+										PlayerGetIndexSlotItem[playerid] = index;
 										PlayerInvListItemRowsOld[playerid] = i;
 										PlayerInvListItemColumnOld[playerid] = j;
 
@@ -4660,10 +4661,10 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 							if (playertextid == PlayerHomeSlotTextDraw[playerid][PlayerHomeSlotModel[playerid][i][j]]){
 								PlayerHomeInvListItemRows[playerid] = i;
 								PlayerHomeInvListItemColumn[playerid] = j;
-								
+
 								if(PlayerGetIndexHomeSlotItem[playerid] == -1){ // เมื่อคลิกไอเท็มครั้งแรก
 									if(HouseStorage[homeid][index][hItemModel] != MODEL_NULL) {
-										PlayerGetIndexHomeSlotItem[playerid] = index; 
+										PlayerGetIndexHomeSlotItem[playerid] = index;
 										PlayerHomeInvListItemRowsOld[playerid] = i;
 										PlayerHomeInvListItemColumnOld[playerid] = j;
 
@@ -4674,7 +4675,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 								}
 								else if(PlayerGetIndexHomeSlotItem[playerid] == index){
 									if(HouseStorage[homeid][index][hItemModel] != MODEL_NULL) {
-										PlayerGetIndexHomeSlotItem[playerid] = index; 
+										PlayerGetIndexHomeSlotItem[playerid] = index;
 										PlayerHomeInvListItemRowsOld[playerid] = i;
 										PlayerHomeInvListItemColumnOld[playerid] = j;
 
@@ -4689,7 +4690,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 
 									RemoveHomeButton(playerid);
 									PlayerGetIndexNextHomeSlotItem[playerid] = index;
-									
+
 									new string[128];
 
 									//swap
@@ -4743,7 +4744,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 													//HouseStorage[homeid][PlayerGetIndexNextHomeSlotItem[playerid]][hItemModel] = HouseStorage[homeid][PlayerGetIndexHomeSlotItem[playerid]][hItemModel];
 													HouseStorage[homeid][PlayerGetIndexNextHomeSlotItem[playerid]][hItemQuantity] += HouseStorage[homeid][PlayerGetIndexHomeSlotItem[playerid]][hItemQuantity];
 													HouseStorage[homeid][PlayerGetIndexNextHomeSlotItem[playerid]][hItemSlot] = PlayerGetIndexNextHomeSlotItem[playerid];
-													
+
 													printf("Home: Update Item %s to Slot %d", HouseStorage[homeid][PlayerGetIndexNextHomeSlotItem[playerid]][hItemName], HouseStorage[homeid][PlayerGetIndexNextHomeSlotItem[playerid]][hItemSlot]);
 													mysql_format(dbCon, string, sizeof(string), "UPDATE `homestorage` SET `itemQuantity` = %d WHERE `ID` = '%d' AND `itemID` = '%d' LIMIT 1", HouseStorage[homeid][PlayerGetIndexNextHomeSlotItem[playerid]][hItemQuantity], HomeData[homeid][homeID], HouseStorage[homeid][PlayerGetIndexNextHomeSlotItem[playerid]][hItemID]);
 													mysql_tquery(dbCon, string);
@@ -4775,7 +4776,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 										PlayerHomeInvListItemColumnOld[playerid] = -1;
 
 										if(HouseStorage[homeid][index][hItemModel] != MODEL_NULL) {
-											PlayerGetIndexHomeSlotItem[playerid] = index; 
+											PlayerGetIndexHomeSlotItem[playerid] = index;
 											PlayerHomeInvListItemRowsOld[playerid] = i;
 											PlayerHomeInvListItemColumnOld[playerid] = j;
 
@@ -5120,7 +5121,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 
 				if(TomatoAmount[playerid] == 1){
 					PlayerTextDrawShow(playerid, PizzaTextDraw[playerid][16]);
-				}	
+				}
 				else if(TomatoAmount[playerid] == 2){
 					PlayerTextDrawShow(playerid, PizzaTextDraw[playerid][17]);
 				}
@@ -5508,7 +5509,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 					SetPlayerAttachedObject(playerid, 3, PlayerData[playerid][pAccessoryModelArms], PlayerData[playerid][pAccessoryArmsType], AccessoryData[playerid][3][0], AccessoryData[playerid][3][1], AccessoryData[playerid][3][2], AccessoryData[playerid][3][3], AccessoryData[playerid][3][4], AccessoryData[playerid][3][5], AccessoryData[playerid][3][6], AccessoryData[playerid][3][7], AccessoryData[playerid][3][8]);
 					Streamer_Update(playerid);
 				}
-				
+
 			}
 			if(playertextid == MoveObjectTextDraw[playerid][6]){ //ไปซ้าย
 				if(PlayerEditObjectSlot[playerid] == 0){ //หมวก
@@ -5535,7 +5536,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 					SetPlayerAttachedObject(playerid, 3, PlayerData[playerid][pAccessoryModelArms], PlayerData[playerid][pAccessoryArmsType], AccessoryData[playerid][3][0], AccessoryData[playerid][3][1], AccessoryData[playerid][3][2], AccessoryData[playerid][3][3], AccessoryData[playerid][3][4], AccessoryData[playerid][3][5], AccessoryData[playerid][3][6], AccessoryData[playerid][3][7], AccessoryData[playerid][3][8]);
 					Streamer_Update(playerid);
 				}
-				
+
 			}
 		}
 		else if(PlayerEditObjectType[playerid] == 2){
@@ -5590,7 +5591,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 					SetPlayerAttachedObject(playerid, 3, PlayerData[playerid][pAccessoryModelArms], PlayerData[playerid][pAccessoryArmsType], AccessoryData[playerid][3][0], AccessoryData[playerid][3][1], AccessoryData[playerid][3][2], AccessoryData[playerid][3][3], AccessoryData[playerid][3][4], AccessoryData[playerid][3][5], AccessoryData[playerid][3][6], AccessoryData[playerid][3][7], AccessoryData[playerid][3][8]);
 					Streamer_Update(playerid);
 				}
-				
+
 			}
 			if(playertextid == MoveObjectTextDraw[playerid][10]){ // เอียงซ้าย
 				if(PlayerEditObjectSlot[playerid] == 0){ //หมวก
@@ -5643,7 +5644,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 					SetPlayerAttachedObject(playerid, 3, PlayerData[playerid][pAccessoryModelArms], PlayerData[playerid][pAccessoryArmsType], AccessoryData[playerid][3][0], AccessoryData[playerid][3][1], AccessoryData[playerid][3][2], AccessoryData[playerid][3][3], AccessoryData[playerid][3][4], AccessoryData[playerid][3][5], AccessoryData[playerid][3][6], AccessoryData[playerid][3][7], AccessoryData[playerid][3][8]);
 					Streamer_Update(playerid);
 				}
-				
+
 			}
 			if(playertextid == MoveObjectTextDraw[playerid][4]){ // หมุนหน้า
 				if(PlayerEditObjectSlot[playerid] == 0){ //หมวก
@@ -5696,7 +5697,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 					SetPlayerAttachedObject(playerid, 3, PlayerData[playerid][pAccessoryModelArms], PlayerData[playerid][pAccessoryArmsType], AccessoryData[playerid][3][0], AccessoryData[playerid][3][1], AccessoryData[playerid][3][2], AccessoryData[playerid][3][3], AccessoryData[playerid][3][4], AccessoryData[playerid][3][5], AccessoryData[playerid][3][6], AccessoryData[playerid][3][7], AccessoryData[playerid][3][8]);
 					Streamer_Update(playerid);
 				}
-				
+
 			}
 		}
 	}
@@ -5721,7 +5722,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 		if(playertextid == GaCha[playerid][11]){
 			HideGaChaBox(playerid);
 		}
-		
+
 		if(playertextid == GaCha[playerid][10]){
 			CheckConfirmRandomBox(playerid);
 		}
@@ -5980,7 +5981,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 			if(PlayerStart_UpgradeWeapon[playerid] == 0)
 				OnPlayer_UpgradeWeaponHide(playerid);
 		}
-		
+
 		if(playertextid == UpgradeWeapon_TextDraw[playerid][5]){
 			Show_PlayerSelectWeaponMain(playerid);
 		}
@@ -6011,7 +6012,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid){
 		if(playertextid == UpgradeWeapon_TextDrawSuc[playerid][11]){
 			OnPlayerHide_TextDrawUpgradeSuc(playerid);
 		}
-	}	
+	}
 	return 1;
 }
 
@@ -6243,7 +6244,7 @@ public OnPlayerClickPlayer(playerid, clickedplayerid, source)
 }
 
 public OnPlayerWeaponShot(playerid, weaponid, hittype, hitid, Float:fX, Float:fY, Float:fZ){
-	
+
 	if(weaponid == PlayerData[playerid][pMyWeapon][0]){
 		PlayerData[playerid][pMyAmmo][0]--;
 		if(PlayerData[playerid][pMyAmmo][0] == 0){
@@ -6314,7 +6315,7 @@ public OnPlayerEditAttachedObject(playerid, response, index, modelid, boneid, Fl
 
 			SetPlayerAttachedObject(playerid, 0, PlayerData[playerid][pAccessoryModelHat], 2, AccessoryData[playerid][0][0], AccessoryData[playerid][0][1], AccessoryData[playerid][0][2], AccessoryData[playerid][0][3], AccessoryData[playerid][0][4], AccessoryData[playerid][0][5], AccessoryData[playerid][0][6], AccessoryData[playerid][0][7], AccessoryData[playerid][0][8]);
 			Character_Save(playerid);
-			
+
 			DeletePVar(playerid, "EditHat");
 		}
 
@@ -6336,7 +6337,7 @@ public OnPlayerEditAttachedObject(playerid, response, index, modelid, boneid, Fl
 
 			SetPlayerAttachedObject(playerid, 1, PlayerData[playerid][pAccessoryModelGlasses], 2, AccessoryData[playerid][1][0], AccessoryData[playerid][1][1], AccessoryData[playerid][1][2], AccessoryData[playerid][1][3], AccessoryData[playerid][1][4], AccessoryData[playerid][1][5], AccessoryData[playerid][1][6], AccessoryData[playerid][1][7], AccessoryData[playerid][1][8]);
 			Character_Save(playerid);
-			
+
 			DeletePVar(playerid, "EditGlasses");
 		}
 
@@ -6359,7 +6360,7 @@ public OnPlayerEditAttachedObject(playerid, response, index, modelid, boneid, Fl
 
 			SetPlayerAttachedObject(playerid, 2, PlayerData[playerid][pAccessoryModelBody], 1, AccessoryData[playerid][2][0], AccessoryData[playerid][2][1], AccessoryData[playerid][2][2], AccessoryData[playerid][2][3], AccessoryData[playerid][2][4], AccessoryData[playerid][2][5], AccessoryData[playerid][2][6], AccessoryData[playerid][2][7], AccessoryData[playerid][2][8]);
 			Character_Save(playerid);
-			
+
 			DeletePVar(playerid, "EditBody");
 		}
 
@@ -6382,7 +6383,7 @@ public OnPlayerEditAttachedObject(playerid, response, index, modelid, boneid, Fl
 
 			SetPlayerAttachedObject(playerid, 3, PlayerData[playerid][pAccessoryModelArms], PlayerData[playerid][pAccessoryArmsType], AccessoryData[playerid][3][0], AccessoryData[playerid][3][1], AccessoryData[playerid][3][2], AccessoryData[playerid][3][3], AccessoryData[playerid][3][4], AccessoryData[playerid][3][5], AccessoryData[playerid][3][6], AccessoryData[playerid][3][7], AccessoryData[playerid][3][8]);
 			Character_Save(playerid);
-			
+
 			DeletePVar(playerid, "EditArms");
 		}
 	}
@@ -6435,7 +6436,7 @@ public OnPlayerEditDynamicObject(playerid, objectid, response, Float:x, Float:y,
 			PumpData[PlayerData[playerid][pEditPump]][pumpPos][1] = y;
 			PumpData[PlayerData[playerid][pEditPump]][pumpPos][2] = z;
 			PumpData[PlayerData[playerid][pEditPump]][pumpPos][3] = rz;
-			
+
 			Pump_Refresh(PlayerData[playerid][pEditPump]);
 			Pump_Save(PlayerData[playerid][pEditPump]);
 
