@@ -614,12 +614,10 @@ Dialog:PlateVeh(playerid, response, listitem, inputtext[]){
 		    return  Dialog_ShowEasy(playerid, PlateVeh, DIALOG_STYLE_INPUT, "MDC > ค้นหาป้ายทะเบียน", "กรอกป้ายทะเบียน:", "ตกลง", "กลับ");
 
         new
-			szEscapedPlate[32], str[128];
+			str[128];
 
-        mysql_escape_string(inputtext, szEscapedPlate);
-
-		mysql_format(dbCon, str,sizeof(str),"SELECT * FROM cars WHERE carPlate = '%s' LIMIT 1", szEscapedPlate);
-		mysql_tquery(dbCon, str, "SearchPlate", "is", playerid, szEscapedPlate);
+		mysql_format(dbCon, str,sizeof(str),"SELECT * FROM cars WHERE carPlate = '%e' LIMIT 1", inputtext);
+		mysql_tquery(dbCon, str, "SearchPlate", "is", playerid, inputtext);
 
     }
     return 1;
@@ -765,7 +763,7 @@ stock ViewCharges(playerid, const name[])
 	new
 	    string[128];
 
-	format(string, sizeof(string), "SELECT * FROM `warrants` WHERE `Suspect` = '%s' ORDER BY `ID` DESC", SQL_ReturnEscaped(name));
+	mysql_format(dbCon, string, sizeof(string), "SELECT * FROM `warrants` WHERE `Suspect` = '%e' ORDER BY `ID` DESC", name);
 	mysql_tquery(dbCon, string, "OnViewCharges", "ds", playerid, name);
 	return 1;
 }
@@ -774,7 +772,7 @@ stock RemoveCharges(const name[]){
     new
 	    string[128];
 
-	format(string, sizeof(string), "DELETE FROM `warrants` WHERE `Suspect` = '%s' LIMIT 1", SQL_ReturnEscaped(name));
+	mysql_format(dbCon, string, sizeof(string), "DELETE FROM `warrants` WHERE `Suspect` = '%e' LIMIT 1", name);
     mysql_tquery(dbCon, string);
     return 1;
 }
@@ -834,7 +832,7 @@ stock AddWarrant(targetid, playerid, const description[])
 	new
 	    string[500];
 
-	format(string, sizeof(string), "INSERT INTO `warrants` (`Suspect`, `Username`, `Date`, `Description`) VALUES('%s', '%s', '%s', '%s')", ReturnName(targetid), ReturnName(playerid), ReturnDate(), SQL_ReturnEscaped(description));
+	mysql_format(dbCon, string, sizeof(string), "INSERT INTO `warrants` (`Suspect`, `Username`, `Date`, `Description`) VALUES('%e', '%e', '%e', '%e')", ReturnName(targetid), ReturnName(playerid), ReturnDate(), description);
 	mysql_tquery(dbCon, string);
 }
 
