@@ -8,6 +8,31 @@ new tmpobjid, BankVault;
 new LoginAttempts[MAX_PLAYERS] = 0;
 new bool: LoggedIn[MAX_PLAYERS];
 
+#define ANTIBOT_IP_SLOTS (64)
+#define ANTIBOT_IP_WINDOW_MS (10000)
+#define ANTIBOT_IP_MAX_CONNECTS (4)
+#define ANTIBOT_IP_BLOCK_MS (60000)
+#define ANTIBOT_GLOBAL_WINDOW_MS (3000)
+#define ANTIBOT_GLOBAL_MAX_CONNECTS (18)
+
+new AntiBotIP[ANTIBOT_IP_SLOTS][16];
+new AntiBotIPCount[ANTIBOT_IP_SLOTS];
+new AntiBotIPWindowTick[ANTIBOT_IP_SLOTS];
+new AntiBotIPBlockedUntil[ANTIBOT_IP_SLOTS];
+new AntiBotGlobalWindowTick;
+new AntiBotGlobalCount;
+
+#define SECURITY_PACKET_WINDOW_MS (1000)
+#define SECURITY_PACKET_MAX_PER_WINDOW (180)
+#define SECURITY_RPC_WINDOW_MS (1000)
+#define SECURITY_RPC_MAX_PER_WINDOW (80)
+
+new SecurityPacketWindowTick[MAX_PLAYERS];
+new SecurityPacketCount[MAX_PLAYERS];
+new SecurityRPCWindowTick[MAX_PLAYERS];
+new SecurityRPCCount[MAX_PLAYERS];
+new SecurityLastNetWarn[MAX_PLAYERS];
+
 new Float:vpos[MAX_VEHICLES][4];
 new PlayerEnterTime[MAX_PLAYERS] = INVALID_VEHICLE_ID;
 
