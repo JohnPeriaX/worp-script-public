@@ -1,4 +1,5 @@
 #include <a_samp>
+#include <YSF>
 
 #pragma semicolon 1
 
@@ -9,6 +10,7 @@
 #define YSI_NO_CACHE_MESSAGE
 #define YSI_NO_HEAP_MALLOC
 #define YSI_NO_MODE_CACHE
+#define SAMP_CONST_CORRECT
 
 #include <YSI_Coding\y_timers>
 #include <YSI_Data\y_iterate>
@@ -43,7 +45,6 @@
 #define  cec_auto
 #include <cec>
 #include <discord-connector>
-#include <YSF>
 #include <easyDialog>
 #include <sampvoice>
 #include <FCNPC>
