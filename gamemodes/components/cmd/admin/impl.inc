@@ -1462,7 +1462,7 @@ public CheckChangeName(playerid, userid)
         SendAdminsMessage(1, COLOR_YELLOW, string);
         SetPlayerName(userid, PlayerData[playerid][pNameChangeTemp]);
         format(PlayerData[userid][pUsername], 64, PlayerData[playerid][pNameChangeTemp]);
-        mysql_format(dbCon, query, sizeof(query), "UPDATE characters SET Username = '%s' WHERE ID = %d LIMIT 1", PlayerData[userid][pUsername], PlayerData[userid][pID]);
+        mysql_format(dbCon, query, sizeof(query), "UPDATE characters SET Username = '%e' WHERE ID = %d LIMIT 1", PlayerData[userid][pUsername], PlayerData[userid][pID]);
         mysql_tquery(dbCon, query);
     }
 	return 1;
@@ -1480,7 +1480,7 @@ CMD:setnewname(playerid, params[]){
 
         if(userid != INVALID_PLAYER_ID){
             if(LoggedIn[userid]){
-                mysql_format(dbCon, query, sizeof(query), "SELECT * FROM `characters` WHERE `Username` = '%s' LIMIT 1", newname);
+                mysql_format(dbCon, query, sizeof(query), "SELECT * FROM `characters` WHERE `Username` = '%e' LIMIT 1", newname);
                 mysql_tquery(dbCon, query, "CheckChangeName", "ii", playerid, userid);
 
                 format(PlayerData[playerid][pNameChangeTemp], 64, newname);

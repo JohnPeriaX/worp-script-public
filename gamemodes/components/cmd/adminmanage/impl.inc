@@ -93,7 +93,7 @@ server_Save()
         ServerData[ServerWeaponGangNotItem]
 	);
 
-    format(query, sizeof(query), "%s, `ServerLocked` = '%d', `ServerPassword` = '%s', `ServerWarCityTime` = '%d' WHERE `serverID` = '%d'",
+    mysql_format(dbCon, query, sizeof(query), "%s, `ServerLocked` = '%d', `ServerPassword` = '%e', `ServerWarCityTime` = '%d' WHERE `serverID` = '%d'",
         query,
         ServerData[ServerLocked],
         ServerData[ServerPassword],
