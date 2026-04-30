@@ -17,7 +17,7 @@ public StopSong(playerid){
 
 forward FixKick(playerid);
 public FixKick(playerid){
-	Kick(playerid);
+	if(IsPlayerConnected(playerid)) Kick(playerid);
 	return 1;
 }
 
