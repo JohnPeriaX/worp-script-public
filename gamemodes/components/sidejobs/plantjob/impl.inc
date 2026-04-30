@@ -457,7 +457,7 @@ CMD:makeplant(playerid, params[]){
 
             new query[500];
 
-            mysql_format(dbCon, query, sizeof query, "INSERT INTO `plants` (`plantType`, `plantOwner`, `plantOwnerName`, `plantWater`, `plantStill`, `plantPosX`, `plantPosY`, `plantPosZ`) VALUES(%d, %d, '%s', %d, %d, %f, %f, %f)",
+            mysql_format(dbCon, query, sizeof query, "INSERT INTO `plants` (`plantType`, `plantOwner`, `plantOwnerName`, `plantWater`, `plantStill`, `plantPosX`, `plantPosY`, `plantPosZ`) VALUES(%d, %d, '%e', %d, %d, %f, %f, %f)",
             type, PlantData[i][plantOwner], PlantData[i][plantOwnerName], PlantData[i][plantWater], PlantData[i][plantStill], x, y, z);
 		    mysql_tquery(dbCon, query, "OnPlantCreated", "i", i);
             break;
@@ -530,7 +530,7 @@ Plant_Save(plantid){
         new
             query[256];
 
-        format(query, sizeof(query), "UPDATE `plants` SET `plantOwner` = '%d', `plantOwnerName` = '%s', `plantWater` = '%d', `plantStill` = '%d' WHERE `plantID` = '%d'",
+        mysql_format(dbCon, query, sizeof(query), "UPDATE `plants` SET `plantOwner` = '%d', `plantOwnerName` = '%e', `plantWater` = '%d', `plantStill` = '%d' WHERE `plantID` = '%d'",
             PlantData[plantid][plantOwner],
             PlantData[plantid][plantOwnerName],
             PlantData[plantid][plantWater],

@@ -422,7 +422,7 @@ WeaponCraft_Save(weaponcraftid)
 	new
 	    query[1536];
 
-	format(query, sizeof(query), "UPDATE `weaponcrafts` SET `weaponcraftModel` = '%d', `weaponcraftType` = '%d', `weaponcraftName` = '%s', `weaponcraftGunpowder` = '%d', `weaponcraftWood` = '%d', `weaponcraftOre` = '%d', `weaponcraftMoney` = '%d', `weaponcraftLevelSkills` = '%d' WHERE `weaponcraftID` = '%d'",
+	mysql_format(dbCon, query, sizeof(query), "UPDATE `weaponcrafts` SET `weaponcraftModel` = '%d', `weaponcraftType` = '%d', `weaponcraftName` = '%e', `weaponcraftGunpowder` = '%d', `weaponcraftWood` = '%d', `weaponcraftOre` = '%d', `weaponcraftMoney` = '%d', `weaponcraftLevelSkills` = '%d' WHERE `weaponcraftID` = '%d'",
 		WeaponCraftData[weaponcraftid][weaponcraftModel],
         WeaponCraftData[weaponcraftid][weaponcraftType],
         WeaponCraftData[weaponcraftid][weaponcraftName],

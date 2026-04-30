@@ -46,7 +46,7 @@ NewCow_Save(cowid){
         new
             query[256];
 
-        format(query, sizeof(query), "UPDATE `newcows` SET `newcowOwner` = '%d', `newcowOwnerName` = '%s', `newcowHungry` = '%d', `newcowGrowth` = '%d', `newcowStill` = '%d', `newcowRounds` = '%d' WHERE `newcowID` = '%d'",
+        mysql_format(dbCon, query, sizeof(query), "UPDATE `newcows` SET `newcowOwner` = '%d', `newcowOwnerName` = '%e', `newcowHungry` = '%d', `newcowGrowth` = '%d', `newcowStill` = '%d', `newcowRounds` = '%d' WHERE `newcowID` = '%d'",
             NewCowData[cowid][newcowOwner],
             NewCowData[cowid][newcowOwnerName],
             NewCowData[cowid][newcowHungry],

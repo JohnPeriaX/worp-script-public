@@ -17,7 +17,7 @@ Ticket_Add(suspectid, price, groupid, playerid, const reason[])
         format(TicketData[suspectid][i][ticketBy], 64, ReturnRoleplayName(playerid));
 	    format(TicketData[suspectid][i][ticketReason], 64, reason);
 
-		format(string, sizeof(string), "INSERT INTO `tickets` (`ID`, `ticketFee`, `ticketGroupID`, `ticketBy`, `ticketDate`, `ticketReason`) VALUES('%d', '%d', '%d', '%s', '%s', '%s')", PlayerData[suspectid][pID], price, TicketData[suspectid][i][ticketGroupID], TicketData[suspectid][i][ticketBy], TicketData[suspectid][i][ticketDate], SQL_ReturnEscaped(reason));
+		mysql_format(dbCon, string, sizeof(string), "INSERT INTO `tickets` (`ID`, `ticketFee`, `ticketGroupID`, `ticketBy`, `ticketDate`, `ticketReason`) VALUES('%d', '%d', '%d', '%e', '%e', '%e')", PlayerData[suspectid][pID], price, TicketData[suspectid][i][ticketGroupID], TicketData[suspectid][i][ticketBy], TicketData[suspectid][i][ticketDate], reason);
 		mysql_tquery(dbCon, string, "OnTicketCreated", "dd", suspectid, i);
 
 		return i;
