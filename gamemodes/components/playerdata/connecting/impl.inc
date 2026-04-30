@@ -24,14 +24,18 @@ public PlayerConnected(playerid){
 
 forward LoadingToFindAccount(playerid);
 public LoadingToFindAccount(playerid){
+	if(!IsPlayerConnected(playerid)) return 0;
+
 	new query[128];
-	mysql_format(dbCon, query, sizeof(query), "SELECT NULL FROM `accounts` WHERE Name = '%s' LIMIT 1", ReturnName(playerid));
+	mysql_format(dbCon, query, sizeof(query), "SELECT NULL FROM `accounts` WHERE Name = '%e' LIMIT 1", ReturnName(playerid));
 	mysql_tquery(dbCon, query, "Handle_Account", "i", playerid);
 	return 1;
 }
 
 forward Handle_Account(playerid);
 public Handle_Account(playerid){
+	if(!IsPlayerConnected(playerid)) return 0;
+
     if(cache_num_rows()) Login_Dialog(playerid);
     else Register_Dialog(playerid);
 	StartPlayerCountTimeLogin[playerid] = SetTimerEx("CountTimeoutLogin", 1000, false, "i", playerid);
@@ -64,7 +68,7 @@ Dialog:LOGIN(playerid, response, listitem, inputtext[]){
     }
     if(response){
         new query[256];
-		mysql_format(dbCon, query, sizeof(query), "SELECT Password FROM accounts WHERE Name = '%s' LIMIT 1", ReturnName(playerid));
+		mysql_format(dbCon, query, sizeof(query), "SELECT Password FROM accounts WHERE Name = '%e' LIMIT 1", ReturnName(playerid));
 		mysql_query(dbCon, query);
 
 		new rows;
@@ -80,9 +84,11 @@ Dialog:LOGIN(playerid, response, listitem, inputtext[]){
 
 forward JDz_OnPassswordVerify(playerid, bool:success);
 public JDz_OnPassswordVerify(playerid, bool:success){
+	if(!IsPlayerConnected(playerid)) return 0;
+
     if(success){
 		new query[512];
-        mysql_format(dbCon, query, sizeof(query), "SELECT SQLID, Name, Wallet, Active, InGame FROM accounts WHERE Name = '%s' LIMIT 1", ReturnName(playerid));
+        mysql_format(dbCon, query, sizeof(query), "SELECT SQLID, Name, Wallet, Active, InGame FROM accounts WHERE Name = '%e' LIMIT 1", ReturnName(playerid));
 		mysql_tquery(dbCon, query, "Login", "i", playerid);
     } else{
         if(LoginAttempts[playerid] < 2){
@@ -117,7 +123,7 @@ public JDz_OnPassswordHashRegister(playerid){
     bcrypt_get_hash(dest);
     new query[512];
     GetPlayerIp(playerid, PlayerData[playerid][pRegisterIP], 16);
-	mysql_format(dbCon, query, sizeof(query), "INSERT INTO accounts (Name, Password, RegisterIP, RegisterDate) VALUES('%s','%s','%s', '%s')", ReturnName(playerid), dest, PlayerData[playerid][pRegisterIP], ReturnDate());
+	mysql_format(dbCon, query, sizeof(query), "INSERT INTO accounts (Name, Password, RegisterIP, RegisterDate) VALUES('%e','%e','%e', '%e')", ReturnName(playerid), dest, PlayerData[playerid][pRegisterIP], ReturnDate());
 	mysql_tquery(dbCon, query, "GetAccID", "i", playerid);
 	
 	SendClientMessage(playerid, COLOR_YELLOW, "- คุณได้ลงทะเบียนกับเราเรียบร้อยแล้ว, ขั้นตอนต่อไปให้คุณใส่รหัสผ่านเพื่อเข้าสู่ระบบ");
@@ -320,7 +326,7 @@ stock FinishRegister(playerid){
 	GetPlayerIp(playerid, PlayerData[playerid][pLastIP], 16);
 
 	new str[128];
-	format(str, sizeof(str), "SELECT * FROM `blacklist` WHERE `Username` = '%s' OR `IP` = '%s'", ReturnName(playerid), PlayerData[playerid][pLastIP]);
+	mysql_format(dbCon, str, sizeof(str), "SELECT * FROM `blacklist` WHERE `Username` = '%e' OR `IP` = '%e'", ReturnName(playerid), PlayerData[playerid][pLastIP]);
 	mysql_tquery(dbCon, str, "OnPlayerBlacklist", "d", playerid);
 
 	SendClientMessageEx(playerid, COLOR_SERVER, "{23D101}| {FFFFFF}ยินดีต้อนรับ %s เข้าสู่เซิฟเวอร์ของเรา, ขอให้คุณสนุกสนานกับเซิฟเวอร์ของเรา", ReturnRoleplayName(playerid));
@@ -824,7 +830,7 @@ public Character_Load(playerid){
 	}
 
 	new str[128];
-	format(str, sizeof(str), "SELECT * FROM `blacklist` WHERE `Username` = '%s' OR `IP` = '%s'", AccountData[playerid][uName], PlayerData[playerid][pLastIP]);
+	mysql_format(dbCon, str, sizeof(str), "SELECT * FROM `blacklist` WHERE `Username` = '%e' OR `IP` = '%e'", AccountData[playerid][uName], PlayerData[playerid][pLastIP]);
 	mysql_tquery(dbCon, str, "OnPlayerBlacklist", "d", playerid);
 
 	if(!UserNameValidator(ReturnName(playerid))){
@@ -1045,6 +1051,8 @@ public CheckIPBan(playerid){
 
 forward OnPlayerBlacklist(playerid);
 public OnPlayerBlacklist(playerid){
+	if(!IsPlayerConnected(playerid)) return 0;
+
 	new
 		reason[128],
 		date[36],
@@ -1127,7 +1135,7 @@ Character_Save(playerid){
 		mysql_tquery(dbCon, query);
 
 
-		mysql_format(dbCon, query, sizeof(query), "UPDATE characters SET LastIP = '%s', LastOnline = '%s', HP = %f, AM = %f, Job = %d, MaxItem = %d, ItemAmount = %d, InvMaxWeight = %f, Injured = %d, InjuredTime = %d, InjuredPosX = %f, InjuredPosY = %f, InjuredPosZ = %f, InjuredPosA = %f, InjuredWorld = %d, InjuredInt = %d WHERE ID = %d LIMIT 1",
+		mysql_format(dbCon, query, sizeof(query), "UPDATE characters SET LastIP = '%e', LastOnline = '%e', HP = %f, AM = %f, Job = %d, MaxItem = %d, ItemAmount = %d, InvMaxWeight = %f, Injured = %d, InjuredTime = %d, InjuredPosX = %f, InjuredPosY = %f, InjuredPosZ = %f, InjuredPosA = %f, InjuredWorld = %d, InjuredInt = %d WHERE ID = %d LIMIT 1",
 			PlayerData[playerid][pLastIP],
 			ReturnDate(),
 			PlayerData[playerid][pHP],
@@ -1147,7 +1155,7 @@ Character_Save(playerid){
 			PlayerData[playerid][pID]);
 		mysql_tquery(dbCon, query);
 
-		mysql_format(dbCon, query, sizeof(query), "UPDATE characters SET Vip = %d, VipDay = %d, VipMonth = %d, VipYear = %d, VipHour = %d, Minutes = %d, Ban = %d, IsPassAdmin = %d, PassAdmin = '%s', Playerhour = %d, Hunger = %d, Water = %d, Energy = %d, Shower = %d, Stress = %d WHERE ID = %d LIMIT 1",
+		mysql_format(dbCon, query, sizeof(query), "UPDATE characters SET Vip = %d, VipDay = %d, VipMonth = %d, VipYear = %d, VipHour = %d, Minutes = %d, Ban = %d, IsPassAdmin = %d, PassAdmin = '%e', Playerhour = %d, Hunger = %d, Water = %d, Energy = %d, Shower = %d, Stress = %d WHERE ID = %d LIMIT 1",
 			PlayerData[playerid][pVip],
 			PlayerData[playerid][pVipDay],
 			PlayerData[playerid][pVipMonth],
@@ -1212,7 +1220,7 @@ Character_Save(playerid){
 			PlayerData[playerid][pID]);
 		mysql_tquery(dbCon, query);
 
-		mysql_format(dbCon, query, sizeof(query), "UPDATE characters SET MicMute = %d, DelayWeapon1 = %d, DelayWeapon2 = %d, DelayWeapon3 = %d, FirstTime = %d, AdminName = '%s', RentHome = %d, MarrySQLID = %d, MarryName = '%s', MarryLevel = %d, MarryDate = '%s', MarrySkin = %d, MarryKissed = %d, MarryGetGift = %d WHERE ID = %d LIMIT 1",
+		mysql_format(dbCon, query, sizeof(query), "UPDATE characters SET MicMute = %d, DelayWeapon1 = %d, DelayWeapon2 = %d, DelayWeapon3 = %d, FirstTime = %d, AdminName = '%e', RentHome = %d, MarrySQLID = %d, MarryName = '%e', MarryLevel = %d, MarryDate = '%e', MarrySkin = %d, MarryKissed = %d, MarryGetGift = %d WHERE ID = %d LIMIT 1",
 			PlayerData[playerid][pMicMute],
 			PlayerData[playerid][pDelayWeapon][0],
 			PlayerData[playerid][pDelayWeapon][1],
@@ -1230,7 +1238,7 @@ Character_Save(playerid){
 			PlayerData[playerid][pID]);
 		mysql_tquery(dbCon, query);
 
-		mysql_format(dbCon, query, sizeof(query), "UPDATE characters SET AccessoryNameHat = '%s', AccessoryModelHat = %d, AccessoryNameGlasses = '%s', AccessoryModelGlasses = %d, AccessoryNameBody = '%s', AccessoryModelBody = %d, AccessoryNameArms = '%s', AccessoryModelArms = %d, AccessoryShowHat = %d, AccessoryShowGlasses = %d, AccessoryShowBody = %d, AccessoryShowArms = %d WHERE ID = %d LIMIT 1",
+		mysql_format(dbCon, query, sizeof(query), "UPDATE characters SET AccessoryNameHat = '%e', AccessoryModelHat = %d, AccessoryNameGlasses = '%e', AccessoryModelGlasses = %d, AccessoryNameBody = '%e', AccessoryModelBody = %d, AccessoryNameArms = '%e', AccessoryModelArms = %d, AccessoryShowHat = %d, AccessoryShowGlasses = %d, AccessoryShowBody = %d, AccessoryShowArms = %d WHERE ID = %d LIMIT 1",
 			PlayerData[playerid][pAccessoryNameHat],
 			PlayerData[playerid][pAccessoryModelHat],
 			PlayerData[playerid][pAccessoryNameGlasses],
@@ -1307,7 +1315,7 @@ Character_Save(playerid){
 			PlayerData[playerid][pID]);
 		mysql_tquery(dbCon, query);
 
-		mysql_format(dbCon, query, sizeof(query), "UPDATE characters SET MyWeaponLevel1 = %d, MyWeaponLevel2 = %d, MyWeaponLevel3 = %d, FailStack = %d, SharkJobExp = %d, SharkJobLevel = %d, ChayaHead = %d, ChayaHeadMessage = '%s', PlantJobExp = %d, PlantJobLevel = %d WHERE ID = %d LIMIT 1",
+		mysql_format(dbCon, query, sizeof(query), "UPDATE characters SET MyWeaponLevel1 = %d, MyWeaponLevel2 = %d, MyWeaponLevel3 = %d, FailStack = %d, SharkJobExp = %d, SharkJobLevel = %d, ChayaHead = %d, ChayaHeadMessage = '%e', PlantJobExp = %d, PlantJobLevel = %d WHERE ID = %d LIMIT 1",
 			PlayerData[playerid][pMyWeaponLevel][0],
 			PlayerData[playerid][pMyWeaponLevel][1],
 			PlayerData[playerid][pMyWeaponLevel][2],
@@ -1335,7 +1343,7 @@ Character_Save(playerid){
 			PlayerData[playerid][pID]);
 		mysql_tquery(dbCon, query);
 
-		mysql_format(dbCon, query, sizeof(query), "UPDATE characters SET TotalOpenBox = %d, ChayaLogin = %d, ChayaLoginMessage = '%s', PlayerInventoryColorR = %d, PlayerInventoryColorG = %d, PlayerInventoryColorB = %d, PassDrivingTest = %d, PlayerFreeGetCar = %d, AccessoryAllSet = '%s', AccessoryAllSetShow = %d, RepairKitBuying = %d WHERE ID = %d LIMIT 1",
+		mysql_format(dbCon, query, sizeof(query), "UPDATE characters SET TotalOpenBox = %d, ChayaLogin = %d, ChayaLoginMessage = '%e', PlayerInventoryColorR = %d, PlayerInventoryColorG = %d, PlayerInventoryColorB = %d, PassDrivingTest = %d, PlayerFreeGetCar = %d, AccessoryAllSet = '%e', AccessoryAllSetShow = %d, RepairKitBuying = %d WHERE ID = %d LIMIT 1",
 			PlayerData[playerid][pTotalOpenBox],
 			PlayerData[playerid][pChayaLogin],
 			PlayerData[playerid][pChayaLoginMessage],
@@ -1397,7 +1405,7 @@ public LoadingCheckName(playerid){
 stock DBNameCheck(playerid, const string[])
 {
 	new query[128];
-	mysql_format(dbCon, query, sizeof(query), "SELECT * FROM `characters` WHERE `Username` = '%s' LIMIT 1", string);
+	mysql_format(dbCon, query, sizeof(query), "SELECT * FROM `characters` WHERE `Username` = '%e' LIMIT 1", string);
 	mysql_tquery(dbCon, query, "FreeNameCheck", "i", playerid);
 	return 1;
 }
@@ -1414,7 +1422,7 @@ public FreeNameCheck(playerid)
     else{
 		new query[256];
 		GetPlayerIp(playerid, PlayerData[playerid][pRegisterIP], 16);
-		mysql_format(dbCon, query, sizeof(query), "INSERT INTO `characters` (A_ID, Username, RegisterIP, RegisterDate) VALUES(%d, '%s', '%s', '%s')", AccountData[playerid][uSQLID], PlayerData[playerid][pUsername], PlayerData[playerid][pRegisterIP], ReturnDate());
+		mysql_format(dbCon, query, sizeof(query), "INSERT INTO `characters` (A_ID, Username, RegisterIP, RegisterDate) VALUES(%d, '%e', '%e', '%e')", AccountData[playerid][uSQLID], PlayerData[playerid][pUsername], PlayerData[playerid][pRegisterIP], ReturnDate());
 		mysql_tquery(dbCon, query, "GetCharacterID", "i", playerid);
 		SetPlayerName(playerid, PlayerData[playerid][pUsername]);
 		Register(playerid);
