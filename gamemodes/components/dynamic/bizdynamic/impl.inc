@@ -82,7 +82,7 @@ Dialog:BizSellingMenu(playerid, response, listitem, inputtext[]){
     if(response){
         new bizid = GetPVarInt(playerid, "BizGetID");
         if(bizid == -1) return 1;   
-        if(listitem >= 0 && listitem <= 20){
+        if(listitem >= 0 && listitem < MAX_ITEMS_BIZ){
             new string[128];
             SetPVarInt(playerid, "buyItemSlotBiz", listitem);
             format(string, sizeof string, "| %s (จำนวนคงเหลือ: %s ชิ้น)\tราคา %s/ชิ้น\nกรอกจำนวนที่คุณต้องการจะซื้อ: ", Item_Data[CheckItemModelIsName(Biz_Data[bizid][bizItems][listitem])][itemName]
@@ -101,6 +101,7 @@ Dialog:InputAmountBuyBiz(playerid, response, listitem, inputtext[]){
     if(response){
         new bizid = GetPVarInt(playerid, "BizGetID");
         new slotitem = GetPVarInt(playerid, "buyItemSlotBiz");
+		if(slotitem < 0 || slotitem >= MAX_ITEMS_BIZ) { SecurityAC_Report(playerid, "bad-biz-buy-slot", false); return 0; }
         new string[128];
         new amount = strval(inputtext);
         if(amount <= 0){
@@ -232,7 +233,7 @@ Dialog:InputItemBiz(playerid, response, listitem, inputtext[]){
     if(response){
         new bizid = GetPVarInt(playerid, "BizGetID");
         if(bizid == -1) return 1;
-        if(listitem >= 0 && listitem <= 20){
+        if(listitem >= 0 && listitem < 20){
             new itemid = PlayerGetItemIndexBiz[playerid][listitem];
             if(itemid != -1){
                 new caption[256];
@@ -258,6 +259,7 @@ Dialog:InputAmountItemBiz(playerid, response, listitem, inputtext[]){
     }
     if(response){
         new itemid = ItemBiz[playerid][ItemIndexBiz];
+		if(itemid < 0 || itemid >= 108) { SecurityAC_Report(playerid, "bad-biz-item-index", false); return 0; }
         new caption[256];
         new amount = strval(inputtext);
 
@@ -337,7 +339,7 @@ Dialog:EdititemBiz(playerid, response, listitem, inputtext[]){
         new bizid = GetPVarInt(playerid, "BizGetID");
         if(bizid == -1) return 1;
         new string[1024], caption[256], count = 0;
-        if(listitem >= 0 && listitem <= 20){
+        if(listitem >= 0 && listitem < MAX_ITEMS_BIZ){
             if(Biz_Data[bizid][bizItems][listitem] == 0){
                 for(new i=0; i<PlayerData[playerid][pMaxItem]; i++) if(i < 108){
                     if(CheckPlayerItemCanPut(playerid, Biz_Data[bizid][bizType], i) == -1) continue;
