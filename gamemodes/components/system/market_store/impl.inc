@@ -90,7 +90,7 @@ Show24Shop(playerid){
 Dialog:DialogMarketShop(playerid, response, listitem, inputtext[]){
 	if(!response) return 1;
 	if(response){
-		if(listitem >= 0 && listitem <= MAX_MARKET_STORE_ITEM){
+		if(listitem >= 0 && listitem < MAX_MARKET_STORE_ITEM){
 			new string[128];
 			SetPVarInt(playerid, "MarketShopItemID", listitem);
 			format(string, sizeof string, "{FFFFFF}| äÍà·çÁ: {FFB025}'%s' {FFFFFF}ÃÒ¤Ò {FFB025}'%s/ªÔé¹'\n{FFFFFF}ÃĞºØ¨Ó¹Ç¹·Õè¤Ø³µéÍ§¡ÒÃ¨Ğ«×éÍ: ", Market_Store[listitem][item_Name], FormatNumber(Market_Store[listitem][item_Price]));
