@@ -6,7 +6,7 @@
 
 hook OnPlayerClickTextDraw(playerid, Text:clickedid){
 	if(LoggedIn[playerid]){
-		if(Text:clickedid == INVALID_TEXT_DRAW){
+		if(clickedid == Text:INVALID_TEXT_DRAW){
 			if(playerOpenCraftingCategory[playerid] && playerOpenCraftingMenu[playerid]){
 				if(!playerStartCraftingItem[playerid]){
 					PlayerCreateCraftingItemTD(playerid, false);
